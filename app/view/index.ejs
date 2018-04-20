@@ -170,34 +170,43 @@
 
             $('#importBtn').click(function(){
                 const file = document.getElementById('file1');
-                const formData = new FormData();
-                formData.append("excel", file.files[0]);
-                console.log("import", file);
-                console.log("import2", file.files[0]);
-                $.ajax({
-                    url: "/stall/excel/import",
-                    type: "post",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(result){
-                        if(result.info){
-                            alert("导入成功");
-                            window.location.href= "/stall";
+                console.log("file", file);
+                if(file.files[0] == "" || file.files[0] == undefined){
+                    alert("请先选择文件");
+                }else{   
+                    const formData = new FormData();
+                    formData.append("excel", file.files[0]);
+                    console.log("import", file);
+                    console.log("import2", file.files[0]);
+                    $.ajax({
+                        url: "/stall/excel/import",
+                        type: "post",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(result){
+                            if(result.info){
+                                alert("导入成功");
+                                window.location.href= "/stall";
+                            }
+                        },
+                        error: function(err){
+                            console.log("err", err);
                         }
-                    },
-                    error: function(err){
-                        console.log("err", err);
-                    }
-                });
+                    });
+                }
             });
 
             $('#exportBtn').click(function(){
                 const start = $('#start').val();
                 const end = $('#end').val();
-                console.log("start",start);
-                console.log("end", end);
-                window.location.href = "/stall/excel/export/"+start+"/"+end;
+                if(start=="" || end == ""){
+                    alert("导出的范围请填完整");
+                }else{
+                    console.log("start", start);
+                    console.log("end", end);
+                    window.location.href = "/stall/excel/export/"+start+"/"+end;
+                }
             });
         });
     </script>
