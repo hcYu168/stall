@@ -58,13 +58,19 @@ module.exports = appInfo => {
   
   config.security = {
     domainWhiteList: [
-        'http://localhost:7001',
-        'http://127.0.0.1:7001'
+        'http://localhost:8090',
+        'http://127.0.0.1:8090'
       ],
     csrf: {
       enable: false
     }
   };
+
+  config.cluster = {
+	listen:{
+	     port:8090
+	}
+  }
 
   config.multipart = {
     fileExtensions: [
