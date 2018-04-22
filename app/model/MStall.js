@@ -7,9 +7,11 @@ module.exports = app =>{
 			primaryKey: true,
 			autoIncrement: true
 		},
-		types: {type: STRING},
+		customer_type: {type: STRING(50)},
+		market_type: {type: STRING(50)},
+		floor: {type: STRING(50)},
 		stall_name: {type: STRING(50)},
-		shaft: {type: STRING(50)},
+		customer_name: {type: STRING(50)},
 		phone: {type: STRING(20)},
 		identity_card: {type: STRING(20)},
 		remark: {type: STRING}

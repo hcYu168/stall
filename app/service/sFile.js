@@ -9,9 +9,11 @@ class fileService extends Service{
 		const {MStall} = ctx.model;
 		console.log("MStall", MStall);
 		//console.log("ctx", ctx);
-		let types = "";
+		let customer_type = "";
+		let market_type = "";
+		let floor = "";
 		let stall_name = "";
-		let shaft = "";
+		let customer_name = "";
 		let phone = "";
 		let identity_card = "";
 		let remark = "";
@@ -37,35 +39,45 @@ class fileService extends Service{
 						for(let j=1; j< data.length; j++){
 							if(data[j].length >= 1){
 								if(data[j][0] != undefined){
-									types = data[j][0]+"";
+									customer_type = data[j][0]+"";
 								}
 							}
 							if(data[j].length >= 2){
 								if(data[j][1] != undefined){
-									stall_name = data[j][1]+"";
+									market_type = data[j][1]+"";
 								}
 							}
 							if(data[j].length >= 3){
 								if(data[j][2] != undefined){
-									shaft = data[j][2]+"";
+									floor = data[j][2]+"";
 								}			
 							}
 							if(data[j].length >= 4){
 								if(data[j][3] != undefined){
-									phone = data[j][3]+"";
+									stall_name = data[j][3]+"";
 								}			
 							}
 							if(data[j].length >= 5){
 								if(data[j][4] != undefined){
-									identity_card = data[j][4]+"";
+									customer_name = data[j][4]+"";
 								}		
 							}
 							if(data[j].length >= 6){
 								if(data[j][5] != undefined){
-									remark = data[j][5]+"";
+									phone = data[j][5]+"";
 								}
 							}
-							await MStall.create({types, stall_name, shaft, phone, identity_card, remark});
+							if(data[j].length >= 7){
+								if(data[j][6] != undefined){
+									identity_card = data[j][6]+"";
+								}
+							}
+							if(data[j].length >= 8){
+								if(data[j][7] != undefined){
+									identity_card = data[j][7]+"";
+								}
+							}
+							await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
 						}
 					}
 					await fs.unlinkSync(picPath);

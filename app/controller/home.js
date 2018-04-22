@@ -1,35 +1,218 @@
 'use strict';
-
+const moment = require('moment');
 const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
 	async index() {
 		const {ctx} = this;
 		const {MStall} = ctx.model;
+		const limit = 10;
+		const offset = 0;
 		const stallAll = await MStall.findAll({});
-		await this.ctx.render("index",{
-			"name": this.ctx.session.name ? this.ctx.session.name : null,
-			"type": this.ctx.session.type,
-			"max": stallAll.length
+		const stalles_detail = [];
+		const type = ctx.session.type;
+		if(type == "superAdmin"){
+			const stalles = await MStall.findAll({
+				limit,
+				offset,
+				order:[
+					["created_at", "DESC"]
+				]
+			});
+			for(let stall of stalles){
+				const stall_detail = ctx.helper.getAttributes(stall, [
+				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+				stalles_detail.push(stall_detail);
+			}
+		}
+		const pageCount = Math.ceil(stallAll.length/10);
+		await ctx.render("index",{
+			"stalles_detail": stalles_detail,
+			"name": ctx.session.name ? ctx.session.name : null,
+			"type": type,
+			"max": stallAll.length,
+			"page": 1,
+			"pageCount": pageCount
+		});
+	}
+
+	async indexShow(){
+		const {ctx} = this;
+		const {MStall} = ctx.model;
+		const {id} = ctx.params;
+		const limit = 10;
+		let offset;
+		if(id>0){
+			offset = (id-1)*10;
+		}else{
+			ctx.throw(401, "id出错");
+		}
+		const stallAll = await MStall.findAll({});
+		const stalles_detail = [];
+		const type = ctx.session.type;
+		if(type == "superAdmin"){
+			const stalles = await MStall.findAll({
+				limit,
+				offset,
+				order:[
+					["created_at", "DESC"]
+				]
+			});
+			for(let stall of stalles){
+				const stall_detail = ctx.helper.getAttributes(stall, [
+				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+				stalles_detail.push(stall_detail);
+			}
+		}
+		const pageCount = Math.ceil(stallAll.length/10);
+		await ctx.render("index",{
+			"stalles_detail": stalles_detail,
+			"name": ctx.session.name ? ctx.session.name : null,
+			"type": type,
+			"max": stallAll.length,
+			"page": parseInt(id),
+			"pageCount": pageCount
 		});
 	}
 
 	async queryStall(){
 		const {ctx} = this;
 		const {MStall} = ctx.model;
-		const {stall_name} = ctx.params;
+		let {market_type, floor, stall_name, customer_name} = ctx.query;
+		console.log("market_type", market_type);
+		console.log('floor', floor);
+		console.log('stall_name', stall_name);
+		console.log('customer_name', customer_name);
+		const limit = 10;
+		const offset = 0;
+		const options = {
+			where:{},
+			"limit": limit,
+			"offset": offset,
+			"order": [
+				["id", "DESC"]
+			]
+		};
+		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
+		if(market_type != ""){
+            options.where.market_type = {'$like': `%${market_type}%`};
+        }
+        if(floor != ""){
+            options.where.floor = {'$like': `%${floor}%`};
+        }
+        if(stall_name != ""){
+            options.where.stall_name = {'$like': `%${stall_name}%`};
+        }
+        if(customer_name != ""){
+            options.where.customer_name = {'$like': `%${customer_name}%`};
+        }
+        console.log("options", options);
 		const stallAll = await MStall.findAll({});
-		const stall = await MStall.findOne({
-			where:{stall_name}
-		});
-		const stall_detail = ctx.helper.getAttributes(stall, [
-			"id", "stall_name", "shaft", "phone", "identity_card", "remark", "types"]);
-		console.log("ads", stall_detail);
+		const stalles = await MStall.findAll(options);
+		const pageCount = Math.ceil(stalles.length/10);
+		const stalles_detail = [];
+		for(let stall of stalles){
+			const stall_detail = ctx.helper.getAttributes(stall, [
+			"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+			stalles_detail.push(stall_detail);
+		}
+		console.log("stalles_detail", stalles_detail);
 		await ctx.render("queryStall", {
-			"stall_detail": stall_detail,
+			"stalles_detail": stalles_detail,
 			"name": this.ctx.session.name ? this.ctx.session.name : null,
 			"type": this.ctx.session.type,
-			"max": stallAll.length
+			"max": stallAll.length,
+			"page": 1,
+			"pageCount": pageCount,
+			"url":url
+		});
+	}
+
+	async getCustomerInfo(){
+		const {ctx} = this;
+		const {MStall} = ctx.model;
+		const {id} = ctx.params;
+		const stall = await MStall.findById(id);
+		const stall_detail = ctx.helper.getAttributes(stall, [
+			"id", "customer_type", "market_type", "floor", "stall_name",
+			"customer_name", "phone", "identity_card", "remark"]);
+		const stalles = await MStall.findAll({
+			where:{
+				"market_type": stall.market_type,
+				"customer_type": stall.customer_type,
+				"stall_name": stall.stall_name,
+			},
+			attributes: ["remark", "created_at"],
+			order:[
+				["created_at", "DESC"]
+			]
+		});
+		const remarkes = [];
+		for(let s of stalles){
+			const formatTime = moment(s.created_at).format("YYYY-MM-DD HH:mm");
+			const remark_detail = s.remark+"··········"+formatTime;
+			remarkes.push(remark_detail);
+		}
+		stall_detail.remark = remarkes;
+		ctx.body = {
+			"action": "query stall by id",
+			"info": true,
+			"stall_detail": stall_detail
+		}
+	}
+
+	async show(){
+		const {ctx} = this;
+		const {MStall} = ctx.model;
+		let {id} = ctx.params;
+		let {market_type, floor, stall_name, customer_name} = ctx.query;
+		const limit = 10;
+		let offset;
+		if(id>0){
+			offset = (id-1)*10;
+		}else{
+			ctx.throw(401, "id出错");
+		}
+		const options = {
+			where:{},
+			"limit": limit,
+			"offset": offset,
+			"order": [
+				["id", "DESC"]
+			]
+		};
+		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
+		if(market_type != ""){
+            options.where.market_type = {'$like': `%${market_type}%`};
+        }
+        if(floor != ""){
+            options.where.floor = {'$like': `%${floor}%`};
+        }
+        if(stall_name != ""){
+            options.where.stall_name = {'$like': `%${stall_name}%`};
+        }
+        if(customer_name != ""){
+            options.where.customer_name = {'$like': `%${customer_name}%`};
+        }
+        console.log("options", options);
+		const stallAll = await MStall.findAll({});
+		const stalles = await MStall.findAll(options);
+		const pageCount = Math.ceil(stalles.length/10);
+		const stalles_detail = [];
+		for(let stall of stalles){
+			const stall_detail = ctx.helper.getAttributes(stall, [
+			"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+			stalles_detail.push(stall_detail);
+		}
+		console.log("stalles_detail", stalles_detail);
+		await ctx.render("queryStall", {
+			"stalles_detail": stalles_detail,
+			"name": this.ctx.session.name ? this.ctx.session.name : null,
+			"type": this.ctx.session.type,
+			"max": stallAll.length,
+			"page": parseInt(id),
+			"pageCount": pageCount,
+			"url": url
 		});
 	}
 }

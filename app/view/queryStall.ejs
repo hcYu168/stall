@@ -134,7 +134,10 @@
             <div class="row" style="margin-top: 2%;">
                 <div class="col-lg-12 col-md-12 col-sm-12">
                     <p>
-                        <input type="text" id="stall_name" placeholder="请输入档口号">
+                        <input type="text" id="market_type" placeholder="请输入市场" style="margin-right: 2%">
+                        <input type="text" id="floor" placeholder="请输入楼层" style="margin-right: 2%">
+                        <input type="text" id="stall_name" placeholder="请输入档口号" style="margin-right: 2%">
+                        <input type="text" id="customer_name" placeholder="请输入姓名" style="margin-right: 2%">
                         <button class="btn btn-large btn-primary" type="button" id="search">搜索</button>
                     </p>
                 </div>
@@ -143,41 +146,142 @@
                 <div class="col-lg-8 col-md-8 col-sm-8">
                     <table class="table table-striped">
                         <tr>
-                            <td><h4>编号</h4></td>
+                            <td><h4>客户</h4></td>
                             <td><h4>市场</h4></td>
+                            <td><h4>楼层</h4></td>
                             <td><h4>档口</h4></td>
                             <td><h4>姓名</h4></td>
                             <td><h4>电话</h4></td>
-                            <td><h4>身份证</h4></td>
                             <td><h4>备注</h4></td>
+                            <td><h4>操作</h4></td>
                         </tr>
-                        <tr>
-                            <td><h4><%= stall_detail.id%></h4></td>
-                            <td><h4><%= stall_detail.types%></h4></td>
-                            <td><h4><%= stall_detail.stall_name%></h4></td>
-                            <td><h4><%= stall_detail.shaft%></h4></td>
-                            <td><h4><%= stall_detail.phone%></h4></td>
-                            <td><h4><%= stall_detail.identity_card%></h4></td>
-                            <td><h4><%= stall_detail.remark%></h4></td>
-                        </tr>
+                        <% for(let i=0; i< stalles_detail.length; i++){ %>
+                            <% if(stalles_detail[i].customer_type == "档主"){ %>
+                                <tr  style="background-color: lightblue;">
+                                    <td><h4><%= stalles_detail[i].customer_type %></h4></td>
+                                    <td><h4><%= stalles_detail[i].market_type %></h4></td>
+                                    <td><h4><%= stalles_detail[i].floor %></h4></td>
+                                    <td><h4><%= stalles_detail[i].stall_name%></h4></td>
+                                    <td><h4><%= stalles_detail[i].customer_name%></h4></td>
+                                    <td><h4><%= stalles_detail[i].phone%></h4></td>
+                                    <td><h4><%= stalles_detail[i].remark%></h4></td>
+                                    <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button></td>
+                                </tr>
+                            <% }else{ %>
+                                <tr>
+                                    <td><h4><%= stalles_detail[i].customer_type %></h4></td>
+                                    <td><h4><%= stalles_detail[i].market_type %></h4></td>
+                                    <td><h4><%= stalles_detail[i].floor %></h4></td>
+                                    <td><h4><%= stalles_detail[i].stall_name%></h4></td>
+                                    <td><h4><%= stalles_detail[i].customer_name%></h4></td>
+                                    <td><h4><%= stalles_detail[i].phone%></h4></td>
+                                    <td><h4><%= stalles_detail[i].remark%></h4></td>
+                                    <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button></td>
+                                </tr>
+                            <% } %>
+                        <% } %>
                     </table>
                 </div>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8">
+                <nav aria-label="Page navigation">
+                  <ul class="pagination">
+                    <% if(page > 1){%>
+                        <li>
+                          <a href="/query/stall/show/<%= page-1 %><%= url%>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                    <% }else{ %>
+                        <li>
+                          <a href="/query/stall/show/<%= page %><%= url%>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                    <% }%>
+                    <%for(var i=1; i<=pageCount; i++){%>
+                        <li><a href="/query/stall/show/<%= i %><%= url%>"><%= i %></a></li>
+                    <% }%>
+                    <% if(page < pageCount){%>
+                        <li>
+                          <a href="/query/stall/show/<%= page+1%><%= url%>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                    <% }else{ %>
+                        <li>
+                          <a href="/query/stall/show/<%= page%><%= url%>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                    <% }%>    
+                  </ul>
+                </nav>
             </div>
         </div>
         <!-- /#page-wrapper -->
 
     </div>
     <!-- /#wrapper -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                 
+                    <div class="form-group">
+                        <h2>客户详情</h2>
+                    </div>
+                    <div class="form-group">
+                        <label >客户：</label>
+                        <input type="text" class="form-control" id="customer_type2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >市场：</label>
+                        <input type="text" class="form-control" id="market_type2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >楼层</label>
+                        <input type="text" class="form-control" id="floor2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >档口：</label>
+                        <input type="text" class="form-control" id="stall_name2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >姓名：</label>
+                        <input type="text" class="form-control" id="customer_name2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >手机：</label>
+                        <input type="text" class="form-control" id="phone2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >身份证：</label>
+                        <input type="text" class="form-control" id="identity2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >备注：</label>
+                        <input type="textarea" class="form-control" id="remark2" style="width: 60%;" disabled="true">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript">
         $(document).ready(function(){
             $('#search').click(function(){
-                const stall_name = $('#stall_name').val();
-                /*$.post("/query/stall", {
-                    "stall_name": stall_name
-                }, function(result){
-                    console.log("result", "查询成功");
-                });*/
-                window.location.href = "/query/stall/"+stall_name
+                let market_type = $('#market_type').val();
+                let floor = $('#floor').val();
+                let stall_name = $('#stall_name').val();
+                let customer_name = $('#customer_name').val();
+                console.log("market_type", market_type);
+                console.log("floor", floor);
+                console.log("stall_name", stall_name);
+                console.log('customer_name', customer_name);
+                window.location.href = `/query/stall?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
             });
 
             $('#importBtn').click(function(){
@@ -220,7 +324,26 @@
                     window.location.href = "/stall/excel/export/"+start+"/"+end;
                 }
             });
+
         });
+            function lookMsg(id){
+                $.get("/query/stall/"+id, function(result){
+                    if(result.info){
+                        const stall_detail = result.stall_detail;
+                        console.log("stall_detail", stall_detail);
+                        $("#customer_type2").val(stall_detail.customer_type);
+                        $("#market_type2").val(stall_detail.market_type);
+                        $("#floor2").val(stall_detail.floor);
+                        $("#stall_name2").val(stall_detail.stall_name);
+                        $("#customer_name2").val(stall_detail.customer_name);
+                        $("#phone2").val(stall_detail.phone);
+                        $("#identity2").val(stall_detail.identity_card);
+                        const remark2 = stall_detail.remark.join(",\n");
+                        $("#remark2").val(remark2);
+                        $('#myModal').modal();
+                    }
+                })
+            }
     </script>
     <!-- jQuery -->
     <script src="/public/vendor/jquery/jquery.min.js"></script>

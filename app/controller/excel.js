@@ -22,7 +22,7 @@ class excelController extends Controller{
 		const {MStall} = ctx.model;
 		const conf = {
 			"name": "sheet1",
-			"data": []
+			"data": [["客户", "市场", "楼层", "档口", "姓名", "电话", "身份证", "备注"]]
 		};
 
 		const stalles = await MStall.findAll({
@@ -34,9 +34,11 @@ class excelController extends Controller{
 		});
 		for(let stall of stalles){
 			const s = [];
-			s.push(stall.types);
+			s.push(stall.customer_type);
+			s.push(stall.market_type);
+			s.push(stall.floor);
 			s.push(stall.stall_name);
-			s.push(stall.shaft);
+			s.push(stall.customer_name);
 			s.push(stall.phone);
 			s.push(stall.identity_card);
 			s.push(stall.remark);
