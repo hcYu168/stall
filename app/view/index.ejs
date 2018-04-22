@@ -247,6 +247,53 @@
 
     </div>
     <!-- /#wrapper -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                 
+                    <div class="form-group">
+                        <h2>客户详情</h2>
+                    </div>
+                    <div class="form-group">
+                        <label >客户：</label>
+                        <input type="text" class="form-control" id="customer_type2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >市场：</label>
+                        <input type="text" class="form-control" id="market_type2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >楼层</label>
+                        <input type="text" class="form-control" id="floor2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >档口：</label>
+                        <input type="text" class="form-control" id="stall_name2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >姓名：</label>
+                        <input type="text" class="form-control" id="customer_name2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >手机：</label>
+                        <input type="text" class="form-control" id="phone2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >身份证：</label>
+                        <input type="text" class="form-control" id="identity2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >备注：</label>
+                        <input type="textarea" class="form-control" id="remark2" style="width: 60%;" disabled="true">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript">
         $(document).ready(function(){
             $('#search').click(function(){
@@ -302,6 +349,24 @@
                 }
             });
         });
+        function lookMsg(id){
+            $.get("/query/stall/"+id, function(result){
+                if(result.info){
+                    const stall_detail = result.stall_detail;
+                    console.log("stall_detail", stall_detail);
+                    $("#customer_type2").val(stall_detail.customer_type);
+                    $("#market_type2").val(stall_detail.market_type);
+                    $("#floor2").val(stall_detail.floor);
+                    $("#stall_name2").val(stall_detail.stall_name);
+                    $("#customer_name2").val(stall_detail.customer_name);
+                    $("#phone2").val(stall_detail.phone);
+                    $("#identity2").val(stall_detail.identity_card);
+                    const remark2 = stall_detail.remark.join(",\n");
+                    $("#remark2").val(remark2);
+                    $('#myModal').modal();
+                }
+            })
+        }
     </script>
     <!-- jQuery -->
     <script src="/public/vendor/jquery/jquery.min.js"></script>
