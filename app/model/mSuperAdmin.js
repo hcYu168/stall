@@ -10,6 +10,7 @@ module.exports = app =>{
 		name: {type: STRING(50)},
 		account: {type: STRING(20)},
 		password: {type: STRING(20)},
+		token: {type: STRING},
 	},{
 		paranoid: true,
 		tableName: 'superAdmin',

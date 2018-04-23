@@ -141,23 +141,51 @@ class HomeController extends Controller {
 				"market_type": stall.market_type,
 				"customer_type": stall.customer_type,
 				"stall_name": stall.stall_name,
+				"floor": stall.floor
 			},
 			attributes: ["remark", "created_at"],
 			order:[
 				["created_at", "DESC"]
 			]
 		});
+		const stall_time = moment(stall.created_at).format("YYYY-MM-DD HH:mm");
+		stall_detail.remark = stall.remark+"··········"+stall_time;
+		console.log("stall_detail.remark", stall_detail.remark);
 		const remarkes = [];
 		for(let s of stalles){
 			const formatTime = moment(s.created_at).format("YYYY-MM-DD HH:mm");
 			const remark_detail = s.remark+"··········"+formatTime;
 			remarkes.push(remark_detail);
 		}
-		stall_detail.remark = remarkes;
+		console.log("remarkes", remarkes);
+		stall_detail.remarkes = remarkes;
 		ctx.body = {
 			"action": "query stall by id",
 			"info": true,
 			"stall_detail": stall_detail
+		}
+	}
+
+	async updateCustomerInfo(){
+		const {ctx} = this;
+		const {MStall} = ctx.model;
+		let {id} = ctx.params;
+		const {customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark} = ctx.request.body;
+		await MStall.update({
+			customer_type,
+			market_type,
+			floor,
+			stall_name,
+			customer_name,
+			phone,
+			identity_card,
+			remark
+		},{
+			where: {id}
+		});
+		ctx.body = {
+			"action": "update customer info",
+			"info": true
 		}
 	}
 

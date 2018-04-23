@@ -8,6 +8,18 @@ module.exports = () => {
 		    	console.log("ctx.session.name", ctx.session.name);	
 		    	ctx.redirect('/stall/admin/login');
 		    }else{
+		    	const {MSuperAdmin, MAdmin} = ctx.model;
+		    	if(ctx.session.type == "superAdmin"){
+		    		const superAdmin = await MSuperAdmin.findById(ctx.session.id);
+		    		if(superAdmin.token != ctx.session.token){
+		    			ctx.redirect('/stall/admin/login');
+		    		}
+		    	}else if(ctx.session.type == "admin"){
+		    		const admin = await MAdmin.findById(ctx.session.id);
+		    		if(admin.token != ctx.session.token){
+		    			ctx.redirect('/stall/admin/login');
+		    		}
+		    	}
 		    	await next();
 		    }
 		}

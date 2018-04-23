@@ -150,7 +150,7 @@
                             <td><h4>市场</h4></td>
                             <td><h4>楼层</h4></td>
                             <td><h4>档口</h4></td>
-                            <td><h4>姓名</h4></td>
+                            <!-- <td><h4>姓名</h4></td> -->
                             <!-- <td><h4>电话</h4></td> -->
                             <td><h4>备注</h4></td>
                             <td><h4>操作</h4></td>
@@ -162,7 +162,7 @@
                                     <td><h4><%= stalles_detail[i].market_type %></h4></td>
                                     <td><h4><%= stalles_detail[i].floor %></h4></td>
                                     <td><h4><%= stalles_detail[i].stall_name%></h4></td>
-                                    <td><h4><%= stalles_detail[i].customer_name%></h4></td>
+                                    <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
                                    <!--  <td><h4><%= stalles_detail[i].phone%></h4></td> -->
                                     <td><h4><%= stalles_detail[i].remark%></h4></td>
                                     <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button></td>
@@ -173,7 +173,7 @@
                                     <td><h4><%= stalles_detail[i].market_type %></h4></td>
                                     <td><h4><%= stalles_detail[i].floor %></h4></td>
                                     <td><h4><%= stalles_detail[i].stall_name%></h4></td>
-                                    <td><h4><%= stalles_detail[i].customer_name%></h4></td>
+                                    <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
                                     <!-- <td><h4><%= stalles_detail[i].phone%></h4></td> -->
                                     <td><h4><%= stalles_detail[i].remark%></h4></td>
                                     <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button></td>
@@ -226,46 +226,49 @@
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-body">
-                 
+                <div class="modal-body">                 
                     <div class="form-group">
                         <h2>客户详情</h2>
                     </div>
-                    <div class="form-group">
-                        <label >客户：</label>
-                        <input type="text" class="form-control" id="customer_type2" style="width: 60%;" disabled="true">
+                    <div class="form-group" style="display: none">
+                        <input type="text" class="form-control" id="customer_id2" style="width: 60%;">
                     </div>
                     <div class="form-group">
-                        <label >市场：</label>
-                        <input type="text" class="form-control" id="market_type2" style="width: 60%;" disabled="true">
+                        <label>客户：</label>
+                        <input type="text" class="form-control" id="customer_type2" style="width: 60%;">
                     </div>
                     <div class="form-group">
-                        <label >楼层</label>
-                        <input type="text" class="form-control" id="floor2" style="width: 60%;" disabled="true">
-                    </div>
-                    <div class="form-group">
-                        <label >档口：</label>
-                        <input type="text" class="form-control" id="stall_name2" style="width: 60%;" disabled="true">
+                        <label >档口详情：</label>
+                        <input type="text" class="form-control" id="stall_name2" style="width: 60%;">
                     </div>
                     <div class="form-group">
                         <label >姓名：</label>
-                        <input type="text" class="form-control" id="customer_name2" style="width: 60%;" disabled="true">
+                        <input type="text" class="form-control" id="customer_name2" style="width: 60%;">
                     </div>
                     <div class="form-group">
-                        <label >手机：</label>
-                        <input type="text" class="form-control" id="phone2" style="width: 60%;" disabled="true">
+                        <label>电话1：</label>
+                        <input type="text" class="form-control" id="phone2" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >电话2：</label>
+                        <input type="text" class="form-control" id="phone3" style="width: 60%;">
                     </div>
                     <div class="form-group">
                         <label >身份证：</label>
-                        <input type="text" class="form-control" id="identity2" style="width: 60%;" disabled="true">
+                        <input type="text" class="form-control" id="identity2" style="width: 60%;">
                     </div>
                     <div class="form-group">
                         <label >备注：</label>
-                        <textarea class="form-control" id="remark2" style="width: 60%;" autoHeight="true"></textarea>
+                        <input class="form-control" id="remark2" style="width: 60%; ">
+                    </div>
+                    <div class="form-group">
+                        <label >备注记录：</label>
+                        <textarea class="form-control" id="remarkes2" style="width: 60%; height: 150px"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="updateSubmit" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>修改</button>
                 </div>
             </div>
         </div>
@@ -325,21 +328,93 @@
                 }
             });
 
+            $('#updateSubmit').click(function(){
+                const id = $('#customer_id2').val();
+                const customer_type = $('#customer_type2').val();
+                let stall = $('#stall_name2').val();
+                let market_type="";
+                let floor = "";
+                let stall_name = ""
+                stall = stall.split("-");
+                for(let i=0; i<stall.length; i++){
+                    if(stall[0] != undefined){
+                        market_type = stall[0];
+                    }
+                    if(stall[1] != undefined){
+                        floor = stall[1];
+                    }
+                    if(stall[2] != undefined){
+                        stall_name = stall[2];
+                    }
+                }
+                const customer_name = $('#customer_name2').val();
+                let phone="";
+                const phone2 = $('#phone2').val();
+                const phone3 = $("#phone3").val();
+                if(phone3 != "" || phone3 != undefined ){
+                    phone = phone2+","+phone3;
+                }
+                const identity_card = $('#identity2').val();
+                let remark= $('#remark2').val();
+                if(remark.indexOf(".">0)){
+                    remark = remark.split("·");
+                    remark = remark[0]+""
+                }
+                console.log("remark", remark);
+                $.ajax({
+                    url: "/query/stall/"+id,
+                    type: "put",
+                    data: {
+                        "customer_type": customer_type,
+                        "market_type": market_type,
+                        "floor": floor,
+                        "stall_name":stall_name,
+                        "customer_name": customer_name,
+                        "phone": phone,
+                        "identity_card": identity_card,
+                        "remark": remark
+                    },
+                    success: function(result){
+                        if(result.info){
+                            alert("修改成功");
+                            window.location.herf= "/query/stall/show/<%= page %><%= url%>"
+                        }
+                    },
+                    error: function(err){
+                        alert("修改失败");
+                        console.log(err);
+                    }
+                });
+            })
+
         });
             function lookMsg(id){
                 $.get("/query/stall/"+id, function(result){
                     if(result.info){
                         const stall_detail = result.stall_detail;
                         console.log("stall_detail", stall_detail);
+                        $("#customer_id2").val(stall_detail.id);
                         $("#customer_type2").val(stall_detail.customer_type);
-                        $("#market_type2").val(stall_detail.market_type);
-                        $("#floor2").val(stall_detail.floor);
-                        $("#stall_name2").val(stall_detail.stall_name);
+                        /*$("#market_type2").val(stall_detail.market_type);
+                        $("#floor2").val(stall_detail.floor);*/
+                        $("#stall_name2").val(stall_detail.market_type+"-"+stall_detail.floor+"-"+stall_detail.stall_name);
                         $("#customer_name2").val(stall_detail.customer_name);
-                        $("#phone2").val(stall_detail.phone);
+                        let phone = stall_detail.phone;
+                        let phone2="";
+                        let phone3 = "";
+                        if(phone.indexOf(",")>0){
+                            phone = phone.split(",");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else{
+                            phone2 = phone;
+                        }
+                        $("#phone2").val(phone2);
+                        $("#phone3").val(phone3);
                         $("#identity2").val(stall_detail.identity_card);
-                        const remark2 = stall_detail.remark.join(",\n");
-                        $("#remark2").val(remark2);
+                        $("#remark2").val(stall_detail.remark);
+                        const remarkes2 = stall_detail.remarkes.join(",\n");
+                        $("#remarkes2").val(remarkes2);
                         $('#myModal').modal();
                     }
                 })

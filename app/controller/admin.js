@@ -1,5 +1,6 @@
 'use strict';
 const Controller = require('egg').Controller;
+const jwt = require("jsonwebtoken");
 class adminController extends Controller{
 	async index(){
 		const { MAdmin } = this.ctx.model;
@@ -136,29 +137,45 @@ class adminController extends Controller{
 		if(admin == ""){
 			const findAdmin = await MAdmin.findOne({where:{account}});
 			if(!findAdmin){
-				this.ctx.throw(404, "admin not found");
+				this.ctx.throw(404, "账号不存在");
 			}
 			const admin = await MAdmin.findOne({
 				where: {account, password},
 			});
 			if(!admin){
-				this.ctx.throw(401, "password wrong");
+				this.ctx.throw(401, "账号 or 密码 错误");
 			}
+			const {token} = await this.service.jwt.getJWT(admin.id);
+			await MAdmin.update({token},{
+				where: {
+					"id": admin.id
+				}
+			});
 			admin_detail = this.ctx.helper.getAttributes(admin, [
 				"id",  "name", "account" ]);
 			this.ctx.session.type = "admin";
+			this.ctx.session.token = token;
+			this.ctx.session.id = id;
 		}else if(admin == "superAdmin"){
 			const findSuperAdmin = await MSuperAdmin.findOne({where: {}});
 			if(!findSuperAdmin){
-				this.ctx.throw(404, "superAdmin not found");
+				this.ctx.throw(404, "账号不存在");
 			}
 			const superAdmin = await MSuperAdmin.findOne({where: {account, password}});
 			if(!superAdmin){
-				this.ctx.throw(401, "password wrong");
+				this.ctx.throw(401, "账号 or 密码 错误");
 			}
+			const {token} = await this.service.jwt.getJWT(superAdmin.id);
+			await MSuperAdmin.update({token},{
+				where: {
+					"id": superAdmin.id
+				}
+			});
 			admin_detail = this.ctx.helper.getAttributes(superAdmin, [
 				"id", "name", "account"]);
 			this.ctx.session.type = "superAdmin";
+			this.ctx.session.token = token;
+			this.ctx.session.id = superAdmin.id;
 		}
 		this.ctx.session.name = admin_detail.name;
 		const loginJson = {
@@ -171,7 +188,15 @@ class adminController extends Controller{
 	async logout(){
 		this.ctx.session.name = null;
 		this.ctx.session.type = null;
+		this.ctx.session.id = null;
+		this.ctx.session.token = null;
 		this.ctx.redirect('/stall/admin/login');
 	}
 }
 module.exports = adminController;
+
+/*
+	挤掉别人登录
+	判断token是否一样
+	如果不一样 就直接跳转到登录界面
+*/

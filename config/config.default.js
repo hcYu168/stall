@@ -67,9 +67,9 @@ module.exports = appInfo => {
   };
 
   config.cluster = {
-	listen:{
-	     port:8090
-	}
+  	listen:{
+  	     port:8090
+  	}
   }
 
   config.multipart = {
@@ -77,6 +77,10 @@ module.exports = appInfo => {
       ".xlsx",
       ".xls"
     ]
+  }
+
+  config.jwt = {
+      secret: "rainchapter"
   }
 
   return config;
