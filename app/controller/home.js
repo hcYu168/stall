@@ -239,23 +239,35 @@ class HomeController extends Controller {
 				["id", "DESC"]
 			]
 		};
+		const options2 = {
+			where:{},
+			"order": [
+				["id", "DESC"]
+			]
+		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
 		if(market_type != ""){
             options.where.market_type = {'$like': `%${market_type}%`};
+            options2.where.market_type = {'$like': `%${market_type}%`};
         }
         if(floor != ""){
             options.where.floor = {'$like': `%${floor}%`};
+            options2.where.floor = {'$like': `%${floor}%`};
         }
         if(stall_name != ""){
             options.where.stall_name = {'$like': `%${stall_name}%`};
+            options2.where.stall_name = {'$like': `%${stall_name}%`};
         }
         if(customer_name != ""){
             options.where.customer_name = {'$like': `%${customer_name}%`};
+            options2.where.customer_name = {'$like': `%${customer_name}%`};
         }
         console.log("options", options);
 		const stallAll = await MStall.findAll({});
 		const stalles = await MStall.findAll(options);
-		const pageCount = Math.ceil(stalles.length/10);
+		const stalles2 = await MStall.findAll(options2);
+		console.log("options2", options2);
+		const pageCount = Math.ceil(stalles2.length/10);
 		const stalles_detail = [];
 		for(let stall of stalles){
 			const stall_detail = ctx.helper.getAttributes(stall, [
