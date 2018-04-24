@@ -181,25 +181,27 @@
                             <td><h4>操作</h4></td>
                         </tr> -->
                         <tr>
-                            <ul class="nav navbar-nav">
-                                <td>
-                                    <li class="dropdown" style="list-style: none;">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                            <h4>客户<b class="caret"></b></h4>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="/stall">全部</a></li>
-                                            <li><a href="/stall/customer_type/1">档主</a></li>
-                                            <li><a href="/stall/customer_type/2">租客</a></li>
-                                        </ul>
-                                    </li>
-                                </td>
-                                <td><h4>市场</h4></td>
-                                <td><h4>楼层</h4></td>
-                                <td><h4>档口</h4></td>
-                                <td><h4>备注</h4></td>
-                                <td><h4>操作</h4></td>
-                            </ul>
+                            <div>
+                                <ul class="nav navbar-nav">
+                                    <td>
+                                        <li class="dropdown" style="list-style: none;">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                <h4>客户<b class="caret"></b></h4>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/stall">全部</a></li>
+                                                <li><a href="/stall/customer_type/1">档主</a></li>
+                                                <li><a href="/stall/customer_type/2">租客</a></li>
+                                            </ul>
+                                        </li>
+                                    </td>
+                                    <td><h4>市场</h4></td>
+                                    <td><h4>楼层</h4></td>
+                                    <td><h4>档口</h4></td>
+                                    <td><h4>备注</h4></td>
+                                    <td><h4>操作</h4></td>
+                                </ul>
+                            </div>  
                         </tr>
                         <% for(let i=0; i< stalles_detail.length; i++){ %>
                             <% if(stalles_detail[i].customer_type == "档主"){ %>
@@ -211,8 +213,7 @@
                                     <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
                                     <!-- <td><h4><%= stalles_detail[i].phone%></h4></td> -->
                                     <td><h4><%= stalles_detail[i].remark%></h4></td>
-                                    <td>
-                                    <button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
+                                    <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
                                     <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
                                     </td>
                                 </tr>
@@ -225,11 +226,9 @@
                                     <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
                                     <!-- <td><h4><%= stalles_detail[i].phone%></h4></td> -->
                                     <td><h4><%= stalles_detail[i].remark%></h4></td>
-                                    <td>
-                                    <button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
+                                    <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
                                     <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
                                     </td>
-
                                 </tr>
                             <% } %>
                         <% } %>
@@ -242,29 +241,29 @@
                   <ul class="pagination">
                     <% if(page > 1){%>
                         <li>
-                          <a href="/stall/<%= page-1 %>" aria-label="Previous">
+                          <a href="/stall/customer_type/<%= category%>/<%= page-1 %>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
                     <% }else{ %>
                         <li>
-                          <a href="/stall/<%= page %>" aria-label="Previous">
+                          <a href="/stall/customer_type/<%= category%>/<%= page %>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
                     <% }%>
                     <%for(var i=1; i<=pageCount; i++){%>
-                        <li><a href="/stall/<%= i %>"><%= i %></a></li>
+                        <li><a href="/stall/customer_type/<%= category%>/<%= i %>"><%= i %></a></li>
                     <% }%>
                     <% if(page < pageCount){%>
                         <li>
-                          <a href="/stall/<%= page+1 %>" aria-label="Next">
+                          <a href="/stall/customer_type/<%= category%>/<%= page+1 %>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
                         </li>
                     <% }else{ %>
                         <li>
-                          <a href="/stall/<%= page %>" aria-label="Next">
+                          <a href="/stall/customer_type/<%= category%>/<%= page %>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
                         </li>
@@ -431,7 +430,6 @@
                 </div>
             </div>
         </div>
-    </div>
     <script type="text/javascript">
         $(document).ready(function(){
             $('#search').click(function(){

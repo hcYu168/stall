@@ -74,7 +74,7 @@ class fileService extends Service{
 							}
 							if(data[j].length >= 8){
 								if(data[j][7] != undefined){
-									identity_card = data[j][7]+"";
+									remark = data[j][7]+"";
 								}
 							}
 							await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
