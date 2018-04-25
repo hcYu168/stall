@@ -84,7 +84,7 @@ class fileService extends Service{
 						}
 					}
 					await fs.unlinkSync(picPath);
-				}, 1000);	
+				}, 2000);	
 	        } catch (err) {
 	          await sendToWormhole(part);
 	          throw err;
