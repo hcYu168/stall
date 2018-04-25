@@ -40,10 +40,18 @@ class HomeController extends Controller {
 		const {ctx} = this;
 		const {MStall} = ctx.model;
 		const {customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark} = ctx.request.body;
-		await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
-		ctx.body= {
-			"action": "create stall",
-			"info": true
+		const stall  = await MStall({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+		if(!stall){
+			await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+			ctx.body= {
+				"action": "create stall",
+				"info": true
+			}
+		}else{
+			ctx.body= {
+				"action": "create stall",
+				"info": false
+			}
 		}
 	}
 
@@ -513,23 +521,34 @@ class HomeController extends Controller {
 				["id", "DESC"]
 			]
 		};
+		const options2 = {
+			where:{},
+			"order": [
+				["id", "DESC"]
+			]
+		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
 		if(market_type != ""){
             options.where.market_type = {'$like': `%${market_type}%`};
+            options2.where.market_type = {'$like': `%${market_type}%`};
         }
         if(floor != ""){
             options.where.floor = {'$like': `%${floor}%`};
+            options2.where.floor = {'$like': `%${floor}%`};
         }
         if(stall_name != ""){
             options.where.stall_name = {'$like': `%${stall_name}%`};
+            options2.where.stall_name = {'$like': `%${stall_name}%`};
         }
         if(customer_name != ""){
             options.where.customer_name = {'$like': `%${customer_name}%`};
+            options2.where.customer_name = {'$like': `%${customer_name}%`};
         }
         console.log("options", options);
 		const stallAll = await MStall.findAll({});
 		const stalles = await MStall.findAll(options);
-		const pageCount = Math.ceil(stalles.length/10);
+		const stalles2 = await MStall.findAll(options2);
+		const pageCount = Math.ceil(stalles2.length/10);
 		const stalles_detail = [];
 		for(let stall of stalles){
 			const stall_detail = ctx.helper.getAttributes(stall, [

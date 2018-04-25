@@ -169,8 +169,8 @@
                                             </a>
                                             <ul class="dropdown-menu">
                                                 <li><a href="/query/stall<%= url%>">全部</a></li>
-                                                <li><a href="/query/stall/customer_type/1">档主</a></li>
-                                                <li><a href="/query/stall/customer_type/2">租客</a></li>
+                                                <li><a href="/query/stall/customer_type/1<%= url%>">档主</a></li>
+                                                <li><a href="/query/stall/customer_type/2<%= url%>">租客</a></li>
                                             </ul>
                                         </li>
                                     </td>
@@ -216,32 +216,39 @@
             </div>
             <div class="col-lg-8 col-md-8 col-sm-8">
                 <nav aria-label="Page navigation">
-                  <ul class="pagination">
+                  <ul class="pagination" id="page">
                     <% if(page > 1){%>
                         <li>
-                          <a href="/query/stall/show/<%= page-1 %><%= url%>" aria-label="Previous">
+                          <a href="/query/stall/customer_type/<%= category%>/<%= page-1 %><%= url%>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
                     <% }else{ %>
                         <li>
-                          <a href="/query/stall/show/<%= page %><%= url%>" aria-label="Previous">
+                          <a href="/query/stall/customer_type/<%= category%>/<%= page %><%= url%><%= url%>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
                     <% }%>
-                    <%for(var i=1; i<=pageCount; i++){%>
-                        <li><a href="/query/stall/show/<%= i %><%= url%>"><%= i %></a></li>
-                    <% }%>
+                    <% if(pageCount <= 20){%>
+                        <%for(var i=1; i<=pageCount; i++){%>
+                            <li><a href="/query/stall/customer_type/<%= category%>/<%= i %><%= url%>"><%= i %></a></li>
+                        <% }%>
+                    <%}else if(pageCount>20){%>
+                        <%for(var i=1; i<20; i++){%>
+                            <li><a href="/query/stall/customer_type/<%= category%>/<%= i %><%= url%>"><%= i %></a></li>
+                        <% }%>
+                        <li id="more"><a href="#">...</a></li>
+                    <%}%>
                     <% if(page < pageCount){%>
                         <li>
-                          <a href="/query/stall/show/<%= page+1%><%= url%>" aria-label="Next">
+                          <a href="/query/stall/customer_type/<%= category%>/<%= page+1 %><%= url%>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
                         </li>
                     <% }else{ %>
                         <li>
-                          <a href="/query/stall/show/<%= page%><%= url%>" aria-label="Next">
+                          <a href="/query/stall/customer_type/<%= category%>/<%= page %><%= url%>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
                         </li>
@@ -531,8 +538,21 @@
                     if(result.info){
                         alert("添加成功");
                         window.location.href="/stall"
+                    }else{
+                        alert("该记录已经存在了");
                     }
                 })
+            });
+
+            $('#more').click(function(){
+                let pageCount = "<%= pageCount%>";
+                let catgeory = "<%= category%>";
+                let url = "<%= url%>"
+                console.log("pageCount", pageCount);
+                $('#more').css("display", "none");
+                for(let i=20; i<pageCount; i++){
+                    $('#page li').eq(i).after("<li><a href='/query/stall/customer_type/"+category+"/"+i+url+"'>"+i+"</a></li>")
+                }
             });
         });
         function lookMsg(id){

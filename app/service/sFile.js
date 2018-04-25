@@ -77,7 +77,10 @@ class fileService extends Service{
 									remark = data[j][7]+"";
 								}
 							}
-							await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+							const stall = await MStall.findOne({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+							if(!stall){
+								await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+							}
 						}
 					}
 					await fs.unlinkSync(picPath);
