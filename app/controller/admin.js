@@ -155,7 +155,7 @@ class adminController extends Controller{
 				"id",  "name", "account" ]);
 			this.ctx.session.type = "admin";
 			this.ctx.session.token = token;
-			this.ctx.session.id = id;
+			this.ctx.session.id = admin.id;
 		}else if(admin == "superAdmin"){
 			const findSuperAdmin = await MSuperAdmin.findOne({where: {}});
 			if(!findSuperAdmin){

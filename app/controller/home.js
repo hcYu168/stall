@@ -40,7 +40,7 @@ class HomeController extends Controller {
 		const {ctx} = this;
 		const {MStall} = ctx.model;
 		const {customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark} = ctx.request.body;
-		const stall  = await MStall({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+		const stall  = await MStall({where:{customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark}});
 		if(!stall){
 			await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
 			ctx.body= {

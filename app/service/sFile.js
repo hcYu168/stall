@@ -7,20 +7,9 @@ const Service = require('egg').Service;
 class fileService extends Service{
 	async upload(ctx){
 		const {MStall} = ctx.model;
-		console.log("MStall", MStall);
-		//console.log("ctx", ctx);
-		let customer_type = "";
-		let market_type = "";
-		let floor = "";
-		let stall_name = "";
-		let customer_name = "";
-		let phone = "";
-		let identity_card = "";
-		let remark = "";
 		const parts = ctx.multipart();
 	    let part;
-        let result;
-        
+	    let result;
 	    while ((part = await parts()) != null) {
 	      if (part.length) {
 	      } else {
@@ -37,6 +26,14 @@ class fileService extends Service{
 					for(let i=0; i< excels.length; i++){
 						const data = excels[i].data;
 						for(let j=1; j< data.length; j++){
+					        let customer_type = "";
+							let market_type = "";
+							let floor = "";
+							let stall_name = "";
+							let customer_name = "";
+							let phone = "";
+							let identity_card = "";
+							let remark = "";
 							if(data[j].length >= 1){
 								if(data[j][0] != undefined){
 									customer_type = data[j][0]+"";
@@ -77,14 +74,17 @@ class fileService extends Service{
 									remark = data[j][7]+"";
 								}
 							}
-							/*const stall = await MStall.findOne({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
-							console.log("stall", stall);
-							*/
-							await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+							console.log("customer_type", customer_type);
+							const stall = await MStall.findOne({where:{customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark}});
+							if(!stall){
+								//console.log("stall", stall);
+								console.log("customer_type", customer_type);
+								await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+							}
 						}
 					}
 					await fs.unlinkSync(picPath);
-				}, 2000);	
+				}, 1000);	
 	        } catch (err) {
 	          await sendToWormhole(part);
 	          throw err;
