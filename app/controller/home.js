@@ -483,6 +483,8 @@ class HomeController extends Controller {
 		const {MStall} = ctx.model;
 		let {id} = ctx.params;
 		const {customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark} = ctx.request.body;
+		console.log("stall_name", stall_name);
+		console.log("identity_card", identity_card);
 		await MStall.update({
 			customer_type,
 			market_type,
