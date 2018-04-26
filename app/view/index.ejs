@@ -35,12 +35,28 @@
     @media (min-width:768px) {  
         .container {  
             width: 750px  
-        }  
+        }
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }   
     }  
       
     @media (min-width:992px) {  
         .container {  
             width: 970px  
+        } 
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }  
     }  
       
@@ -48,14 +64,30 @@
         .container {  
             width: 1170px  
         }  
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        } 
     }  
     @media (min-width:1200px) {  
         .container {  
             width: auto  
-        }  
-}  
-</head>
+        } 
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        } 
+    }  
 </style>
+</head>
 <body class=".container">
     <div id="wrapper">     
         <!-- Navigation -->

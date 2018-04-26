@@ -16,7 +16,7 @@ class HomeController extends Controller {
 				limit,
 				offset,
 				order:[
-					["created_at", "DESC"]
+					["updated_at", "DESC"]
 				]
 			});
 			for(let stall of stalles){
@@ -74,7 +74,7 @@ class HomeController extends Controller {
 				limit,
 				offset,
 				order:[
-					["created_at", "DESC"]
+					["updated_at", "DESC"]
 				]
 			});
 			for(let stall of stalles){
@@ -114,7 +114,7 @@ class HomeController extends Controller {
 					limit,
 					offset,
 					order:[
-						["created_at", "DESC"]
+						["updated_at", "DESC"]
 					]
 				});
 				const sum = await MStall.findAll({
@@ -131,7 +131,7 @@ class HomeController extends Controller {
 					limit,
 					offset,
 					order:[
-						["created_at", "DESC"]
+						["updated_at", "DESC"]
 					]
 				});
 				const sum = await MStall.findAll({
@@ -184,7 +184,7 @@ class HomeController extends Controller {
 					limit,
 					offset,
 					order:[
-						["created_at", "DESC"]
+						["updated_at", "DESC"]
 					]
 				});
 				const sum = await MStall.findAll({
@@ -201,7 +201,7 @@ class HomeController extends Controller {
 					limit,
 					offset,
 					order:[
-						["created_at", "DESC"]
+						["updated_at", "DESC"]
 					]
 				});
 				const sum = await MStall.findAll({
@@ -310,13 +310,13 @@ class HomeController extends Controller {
 			"limit": limit,
 			"offset": offset,
 			"order": [
-				["id", "DESC"]
+				["updated_at", "DESC"]
 			]
 		};
 		const options2 = {
 			where:{},
 			"order": [
-				["id", "DESC"]
+				["updated_at", "DESC"]
 			]
 		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
@@ -384,13 +384,13 @@ class HomeController extends Controller {
 			"limit": limit,
 			"offset": offset,
 			"order": [
-				["id", "DESC"]
+				["updated_at", "DESC"]
 			]
 		};
 		const options2 = {
 			where:{},
 			"order": [
-				["id", "DESC"]
+				["updated_at", "DESC"]
 			]
 		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
@@ -455,17 +455,17 @@ class HomeController extends Controller {
 				"stall_name": stall.stall_name,
 				"floor": stall.floor
 			},
-			attributes: ["remark", "created_at"],
+			attributes: ["remark", "updated_at"],
 			order:[
-				["created_at", "DESC"]
+				["updated_at", "DESC"]
 			]
 		});
-		const stall_time = moment(stall.created_at).format("YYYY-MM-DD HH:mm");
+		const stall_time = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
 		stall_detail.remark = stall.remark+"··········"+stall_time;
 		console.log("stall_detail.remark", stall_detail.remark);
 		const remarkes = [];
 		for(let s of stalles){
-			const formatTime = moment(s.created_at).format("YYYY-MM-DD HH:mm");
+			const formatTime = moment(s.updated_at).format("YYYY-MM-DD HH:mm");
 			const remark_detail = s.remark+"··········"+formatTime;
 			remarkes.push(remark_detail);
 		}
@@ -520,13 +520,13 @@ class HomeController extends Controller {
 			"limit": limit,
 			"offset": offset,
 			"order": [
-				["id", "DESC"]
+				["updated_at", "DESC"]
 			]
 		};
 		const options2 = {
 			where:{},
 			"order": [
-				["id", "DESC"]
+				["updated_at", "DESC"]
 			]
 		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
