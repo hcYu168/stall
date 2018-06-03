@@ -7,6 +7,7 @@ module.exports = app =>{
 			primaryKey: true,
 			autoIncrement: true
 		},
+		customer_id: {type: INTEGER},
 		customer_type: {type: STRING},
 		market_type: {type: STRING},
 		floor: {type: STRING},
@@ -22,6 +23,12 @@ module.exports = app =>{
 		collate: 'utf8mb4_general_ci'
 	});
 	MStall.sync();
+	MStall.associate = function(){
+		MStall.belongsTo(app.model.MCustomer, {
+			as: "stall_cus",
+			foreignKey: "customer_id"
+		});
+	}
 	return MStall;
 }
 

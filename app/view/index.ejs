@@ -143,6 +143,9 @@
                         <li id="content">
                             <a href="/admin">用户管理<span class="fa arrow"></span></a>
                         </li>
+                        <li id="customer">
+                            <a href="/customer"></i>客户管理<span class="fa arrow"></span></a>
+                        </li>
                         <% }else if(type == "admin"){%>
                             <li id="content">
                                 <a href="/stall">档口管理<span class="fa arrow"></span></a>
@@ -161,7 +164,15 @@
                     <h2 class="page-header">档口列表</h2>
                 </div>
                 <!-- /.col-lg-12 -->
-                <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 1%;">
+                    <label>选择客户类型：</label>
+                    <select id="queryCus" name="pageType">
+                        <% for(let i=0; i<customers.length; i++){ %>
+                            <option id="<%= customers[i].id%>"><%= customers[i].name%></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top: 1%;">
                     <% if(type == "superAdmin"){%>
                     <div class="col-lg-2 col-md-2 col-sm-2">
                         <input type="file" id="file1">
@@ -186,7 +197,7 @@
                     </div>
                     <% } %>
                 </div>
-                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 15px;">
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 15px;margin-top: 1%;">
                     <button class="btn btn-large btn-primary" type="button" id="addBtn" onclick="addMsg()">添加</button>
                 </div>
             </div>
@@ -200,29 +211,20 @@
                 </div>
             </div>
             <div class="row" style="margin-top: 2%;">
-                <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="col-lg-10 col-md-10 col-sm-10">
                     <table class="table table-striped">
-                        <!-- <tr>
-                            <td><h4>客户</h4></td>
-                            <td><h4>市场</h4></td>
-                            <td><h4>楼层</h4></td>
-                            <td><h4>档口</h4></td>
-                            <td><h4>姓名</h4></td>
-                            <td><h4>电话</h4></td>
-                            <td><h4>备注</h4></td>
-                            <td><h4>操作</h4></td>
-                        </tr> -->
                         <tr>
                             <ul class="nav navbar-nav">
-                                <td>
+                                <td style="overflow:visible;">
                                     <li class="dropdown" style="list-style: none;">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                            <h4>客户<b class="caret"></b></h4>
+                                            <h4>档主<b class="caret"></b></h4>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li><a href="/stall">全部</a></li>
-                                            <li><a href="/stall/customer_type/1">档主</a></li>
-                                            <li><a href="/stall/customer_type/2">租客</a></li>
+                                            <% for(let i=0; i<customers.length; i++){ %>
+                                                <li><a href="/stall/customer_type/<%= customers[i].id%>"><%= customers[i].name%></a></li>
+                                            <% } %>
                                         </ul>
                                     </li>
                                 </td>
@@ -234,83 +236,64 @@
                             </ul>
                         </tr>
                         <% for(let i=0; i< stalles_detail.length; i++){ %>
-                            <% if(stalles_detail[i].customer_type == "档主"){ %>
-                                <tr  style="background-color: lightblue;">
-                                    <td><h4><%= stalles_detail[i].customer_type %></h4></td>
-                                    <td><h4><%= stalles_detail[i].market_type %></h4></td>
-                                    <td><h4><%= stalles_detail[i].floor %></h4></td>
-                                    <td><h4><%= stalles_detail[i].stall_name%></h4></td>
-                                    <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
-                                    <!-- <td><h4><%= stalles_detail[i].phone%></h4></td> -->
-                                    <td><h4><%= stalles_detail[i].remark%></h4></td>
-                                    <td>
-                                    <button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
-                                    <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
-                                    </td>
-                                </tr>
-                            <% }else{ %>
-                                <tr>
-                                    <td><h4><%= stalles_detail[i].customer_type %></h4></td>
-                                    <td><h4><%= stalles_detail[i].market_type %></h4></td>
-                                    <td><h4><%= stalles_detail[i].floor %></h4></td>
-                                    <td><h4><%= stalles_detail[i].stall_name%></h4></td>
-                                    <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
-                                    <!-- <td><h4><%= stalles_detail[i].phone%></h4></td> -->
-                                    <td><h4><%= stalles_detail[i].remark%></h4></td>
-                                    <td>
-                                    <button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
-                                    <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
-                                    </td>
-
-                                </tr>
-                            <% } %>
+                            <tr style="background-color: <%= stalles_detail[i].color %>;">
+                                <td><h4><%= stalles_detail[i].customer_type %></h4></td>
+                                <td><h4><%= stalles_detail[i].market_type %></h4></td>
+                                <td><h4><%= stalles_detail[i].floor %></h4></td>
+                                <td><h4><%= stalles_detail[i].stall_name%></h4></td>
+                                <td><h4><%= stalles_detail[i].remark%></h4></td>
+                                <td>
+                                <button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
+                                <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
+                                </td>
+                            </tr> 
                         <% } %>
                     </table>
                 </div>
             </div>
             <% if(type == "superAdmin"){%>
-            <div class="col-lg-10 col-md-10 col-sm-10">
-                <nav aria-label="Page navigation">
-                  <ul class="pagination" id="page">
-                    <% if(page > 1){%>
-                        <li>
-                          <a href="/stall/<%= page-1 %>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                          </a>
-                        </li>
-                    <% }else{ %>
-                        <li>
-                          <a href="/stall/<%= page %>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                          </a>
-                        </li>
-                    <% }%>
-                    <% if(pageCount <= 20){%>
-                        <%for(var i=1; i<=pageCount; i++){%>
-                            <li><a href="/stall/<%= i %>"><%= i %></a></li>
+                <div class="col-lg-10 col-md-10 col-sm-10">
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination" id="page">
+                        <% if(page > 1){%>
+                            <li>
+                              <a href="/stall/<%= page-1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
+                        <% }else{ %>
+                            <li>
+                              <a href="/stall/<%= page %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
                         <% }%>
-                    <%}else if(pageCount>20){%>
-                        <%for(var i=1; i<20; i++){%>
-                            <li><a href="/stall/<%= i %>"><%= i %></a></li>
-                        <% }%>
-                        <li id="more"><a href="#">...</a></li>
-                    <%}%>
-                    <% if(page < pageCount){%>
-                        <li>
-                          <a href="/stall/<%= page+1 %>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>
-                        </li>
-                    <% }else{ %>
-                        <li>
-                          <a href="/stall/<%= page %>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>
-                        </li>
-                    <% }%>    
-                  </ul>
-                </nav>
-            </div>
+                        <% if(pageCount <= 20){%>
+                            <%for(var i=1; i<=pageCount; i++){%>
+                                <li><a href="/stall/<%= i %>"><%= i %></a></li>
+                            <% }%>
+                        <%}else if(pageCount>20){%>
+                            <%for(var i=1; i<20; i++){%>
+                                <li><a href="/stall/<%= i %>"><%= i %></a></li>
+                            <% }%>
+                            <li id="more"><a href="#">...</a></li>
+                        <%}%>
+                        <% if(page < pageCount){%>
+                            <li>
+                              <a href="/stall/<%= page+1 %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                            </li>
+                        <% }else{ %>
+                            <li>
+                              <a href="/stall/<%= page %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                            </li>
+                        <% }%>    
+                      </ul>
+                    </nav>
+                </div>
             <% }%>
         </div>
         <!-- /#page-wrapper -->
@@ -325,7 +308,11 @@
                     </div>
                     <div class="form-group">
                         <label>客户：</label>
-                        <input type="text" class="form-control" id="add_customer_type" style="width: 60%;">
+                        <select id="cus" name="pageType">
+                            <% for(let i=0; i<customers.length; i++){ %>
+                                <option id="<%= customers[i].id%>"><%= customers[i].name%></option>
+                            <% } %>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>市场：</label>
@@ -428,7 +415,11 @@
                     </div>
                     <div class="form-group">
                         <label>客户：</label>
-                        <input type="text" class="form-control" id="update_customer_type" style="width: 60%;">
+                        <select id="updateCus" name="pageType">
+                            <% for(let i=0; i<customers.length; i++){ %>
+                                <option id="<%= customers[i].id%>"><%= customers[i].name%></option>
+                            <% } %>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>市场：</label>
@@ -470,8 +461,21 @@
             </div>
         </div>
     </div>
+    
+    <!-- jQuery -->
+    <script src="/public/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/public/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/public/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/public/dist/js/sb-admin-2.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
+            const page = '<%= page%>';
             $('#search').click(function(){
                 let market_type = $('#market_type').val();
                 let floor = $('#floor').val();
@@ -489,8 +493,12 @@
                 console.log("file", file);
                 if(file.files[0] == "" || file.files[0] == undefined){
                     alert("请先选择文件");
-                }else{   
+                }else{
+                    const customer_type = $("#queryCus option:selected").text()
+                    const customer_id = $("#queryCus").find("option:selected").attr("id")   
                     const formData = new FormData();
+                    formData.append("customer_type", customer_type);
+                    formData.append("customer_id", customer_id);
                     formData.append("excel", file.files[0]);
                     console.log("import", file);
                     console.log("import2", file.files[0]);
@@ -529,7 +537,8 @@
 
             $('#updateSubmit').click(function(){
                 const id = $('#update_customer_id').val();
-                const customer_type = $('#update_customer_type').val();
+                const customer_type = $("#updateCus option:selected").text()
+                const customer_id = $("#updateCus").find("option:selected").attr("id")
                 const market_type=$('#update_market_type').val();
                 const floor = $('#update_floor').val();
                 const stall_name = $('#update_stall_name').val();
@@ -551,6 +560,7 @@
                     url: "/query/stall/"+id,
                     type: "put",
                     data: {
+                        "customer_id": customer_id,
                         "customer_type": customer_type,
                         "market_type": market_type,
                         "floor": floor,
@@ -563,7 +573,7 @@
                     success: function(result){
                         if(result.info){
                             alert("修改成功");
-                            window.location.href= "/stall"
+                            window.location.href= '/stall/'+page;
                         }
                     },
                     error: function(err){
@@ -574,7 +584,8 @@
             })
 
             $('#addSubmit').click(function(){
-                const customer_type = $("#add_customer_type").val();
+                const customer_type = $("#cus option:selected").text()
+                const customer_id = $("#cus").find("option:selected").attr("id")
                 const market_type = $("#add_market_type").val();
                 const floor = $("#add_floor").val();
                 const stall_name = $("#add_stall_name").val();
@@ -585,6 +596,7 @@
                 const identity_card = $("#add_identity").val();
                 const remark = $("#add_remark").val();
                 $.post("/stall/add", {
+                    "customer_id": customer_id,
                     "customer_type":customer_type,
                     "market_type" : market_type,
                     "floor": floor,
@@ -596,7 +608,7 @@
                 },function(result){
                     if(result.info){
                         alert("添加成功");
-                        window.location.href="/stall"
+                        window.location.href="/stall/"+page
                     }else{
                         alert("该记录已经存在了");
                     }
@@ -652,7 +664,7 @@
                     $("#remark2").val(stall_detail.remark);
                     const remarkes2 = stall_detail.remarkes.join(",\n");
                     $("#remarkes2").val(remarkes2);
-                    $('#myModal').modal();
+                    $('#myModal').modal({backdrop: 'static', keyboard: false});
                 }
             })
         }
@@ -692,26 +704,14 @@
                     $("#update_phone3").val(phone3);
                     $("#update_identity").val(stall_detail.identity_card);
                     $("#update_remark").val(stall_detail.remark);
-                    $('#updateModal').modal();
+                    $('#updateModal').modal({backdrop: 'static', keyboard: false});
                 }
             })
         }
         function addMsg(){
-            $('#addModal').modal();
+            $('#addModal').modal({backdrop: 'static', keyboard: false});
         }
     </script>
-    <!-- jQuery -->
-    <script src="/public/vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/public/vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="/public/dist/js/sb-admin-2.js"></script>
-
 </body>
 
 </html>

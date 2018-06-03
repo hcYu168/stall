@@ -4,59 +4,10 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
 	async index() {
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		const limit = 10;
-		const offset = 0;
-		const stallAll = await MStall.findAll({});
-		const stalles_detail = [];
-		const type = ctx.session.type;
-		if(type == "superAdmin"){
-			const stalles = await MStall.findAll({
-				limit,
-				offset,
-				order:[
-					["updated_at", "DESC"]
-				]
-			});
-			for(let stall of stalles){
-				const stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
-				stalles_detail.push(stall_detail);
-			}
-		}
-		const pageCount = Math.ceil(stallAll.length/10);
-		await ctx.render("index",{
-			"stalles_detail": stalles_detail,
-			"name": ctx.session.name ? ctx.session.name : null,
-			"type": type,
-			"max": stallAll.length,
-			"page": 1,
-			"pageCount": pageCount
-		});
+		await this.ctx.redirect("/stall/1");
 	}
-
-	async addStall(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		const {customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark} = ctx.request.body;
-		const stall  = await MStall.findOne({where:{customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark}});
-		if(!stall){
-			await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
-			ctx.body= {
-				"action": "create stall",
-				"info": true
-			}
-		}else{
-			ctx.body= {
-				"action": "create stall",
-				"info": false
-			}
-		}
-	}
-
 	async indexShow(){
-		const {ctx} = this;
+		const {ctx, service} = this;
 		const {MStall} = ctx.model;
 		const {id} = ctx.params;
 		const limit = 10;
@@ -66,177 +17,49 @@ class HomeController extends Controller {
 		}else{
 			ctx.throw(401, "id出错");
 		}
+		let customer_type = "档主";
 		const stallAll = await MStall.findAll({});
 		const stalles_detail = [];
 		const type = ctx.session.type;
 		if(type == "superAdmin"){
 			const stalles = await MStall.findAll({
+				where:{
+					"customer_type": "档主"
+				},
 				limit,
 				offset,
 				order:[
 					["updated_at", "DESC"]
-				]
+				],
+				include:[{
+					model: ctx.model.MCustomer,
+					as: "stall_cus"
+				}]
 			});
 			for(let stall of stalles){
 				const stall_detail = ctx.helper.getAttributes(stall, [
 				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+				stall_detail.color = stall.stall_cus.color;
 				stalles_detail.push(stall_detail);
 			}
 		}
-		const pageCount = Math.ceil(stallAll.length/10);
+		const pageCount = Math.ceil(stallAll.length/limit);
+		const {customers_detail} = await service.sCustomer.findAll();
 		await ctx.render("index",{
 			"stalles_detail": stalles_detail,
 			"name": ctx.session.name ? ctx.session.name : null,
 			"type": type,
 			"max": stallAll.length,
 			"page": parseInt(id),
-			"pageCount": pageCount
-		});
-	}
-
-	async indexType(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		const {category} = ctx.params;
-		const limit = 10;
-		const offset = 0;
-		const stallAll = await MStall.findAll({});
-		const stalles_detail = [];
-		const type = ctx.session.type;
-		let stalles;
-		let pageCount;
-		if(type == "superAdmin"){
-			if(category == "1"){
-				stalles = await MStall.findAll({
-					where:{
-						"customer_type": "档主"
-					},
-					limit,
-					offset,
-					order:[
-						["updated_at", "DESC"]
-					]
-				});
-				const sum = await MStall.findAll({
-					where:{
-						"customer_type": "档主"
-					}
-				});
-				pageCount = Math.ceil(sum.length/10);
-			}else if(category == "2"){
-				stalles = await MStall.findAll({
-					where:{
-						"customer_type": "租客"
-					},
-					limit,
-					offset,
-					order:[
-						["updated_at", "DESC"]
-					]
-				});
-				const sum = await MStall.findAll({
-					where:{
-						"customer_type": "租客"
-					}
-				});
-				pageCount = Math.ceil(sum.length/10);
-			}
-			
-			for(let stall of stalles){
-				const stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
-				stalles_detail.push(stall_detail);
-			}
-		}
-		await ctx.render("indexType",{
-			"stalles_detail": stalles_detail,
-			"name": ctx.session.name ? ctx.session.name : null,
-			"type": type,
-			"max": stallAll.length,
-			"page": 1,
 			"pageCount": pageCount,
-			"category": category
-		});
-	}
-
-	async indexTypeShow(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		const {category, id} = ctx.params;
-		const limit = 10;
-		let offset;
-		if(id>0){
-			offset = (id-1)*10;
-		}else{
-			ctx.throw(401, "id出错");
-		}
-		const stallAll = await MStall.findAll({});
-		const stalles_detail = [];
-		const type = ctx.session.type;
-		let stalles;
-		let pageCount;
-		if(type == "superAdmin"){
-			if(category == "1"){
-				stalles = await MStall.findAll({
-					where:{
-						"customer_type": "档主"
-					},
-					limit,
-					offset,
-					order:[
-						["updated_at", "DESC"]
-					]
-				});
-				const sum = await MStall.findAll({
-					where:{
-						"customer_type": "档主"
-					}
-				});
-				pageCount = Math.ceil(sum.length/10);
-			}else if(category == "2"){
-				stalles = await MStall.findAll({
-					where:{
-						"customer_type": "租客"
-					},
-					limit,
-					offset,
-					order:[
-						["updated_at", "DESC"]
-					]
-				});
-				const sum = await MStall.findAll({
-					where:{
-						"customer_type": "档主"
-					}
-				});
-				pageCount = Math.ceil(sum.length/10);
-			}
-			
-			for(let stall of stalles){
-				const stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
-				stalles_detail.push(stall_detail);
-			}
-		}
-		await ctx.render("indexType",{
-			"stalles_detail": stalles_detail,
-			"name": ctx.session.name ? ctx.session.name : null,
-			"type": type,
-			"max": stallAll.length,
-			"page": parseInt(id),
-			"pageCount": pageCount,
-			"category": category
+			"customers": customers_detail
 		});
 	}
 
 	async queryStall(){
-		const {ctx} = this;
+		const {ctx, service} = this;
 		const {MStall} = ctx.model;
 		let {market_type, floor, stall_name, customer_name} = ctx.query;
-		console.log("market_type", market_type);
-		console.log('floor', floor);
-		console.log('stall_name', stall_name);
-		console.log('customer_name', customer_name);
 		const limit = 10;
 		const offset = 0;
 		const options = {
@@ -244,45 +67,39 @@ class HomeController extends Controller {
 			"limit": limit,
 			"offset": offset,
 			"order": [
-				["id", "DESC"]
-			]
-		};
-		const options2 = {
-			where:{},
-			"order": [
-				["id", "DESC"]
-			]
+				["updated_at", "DESC"]
+			],
+			include:[{
+				model: ctx.model.MCustomer,
+				as: "stall_cus"
+			}]
 		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
 		if(market_type != ""){
             options.where.market_type = {'$like': `%${market_type}%`};
-            options2.where.market_type = {'$like': `%${market_type}%`};
         }
         if(floor != ""){
             options.where.floor = {'$like': `%${floor}%`};
-            options2.where.floor = {'$like': `%${floor}%`};
         }
         if(stall_name != ""){
             options.where.stall_name = {'$like': `%${stall_name}%`};
-            options2.where.stall_name = {'$like': `%${stall_name}%`};
         }
         if(customer_name != ""){
             options.where.customer_name = {'$like': `%${customer_name}%`};
-            options2.where.customer_name = {'$like': `%${customer_name}%`};
         }
         console.log("options", options);
 		const stallAll = await MStall.findAll({});
-		const stalles = await MStall.findAll(options);
-		const stalles2 = await MStall.findAll(options2);
-		console.log("options2", options2);
-		const pageCount = Math.ceil(stalles2.length/10);
+		const stalles = await MStall.findAndCountAll(options);
+		const pageCount = Math.ceil(stalles.count/limit);
+		console.log("pageCount", pageCount);
 		const stalles_detail = [];
-		for(let stall of stalles){
+		for(let stall of stalles.rows){
 			const stall_detail = ctx.helper.getAttributes(stall, [
 			"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+			stall_detail.color = stall.stall_cus.color
 			stalles_detail.push(stall_detail);
 		}
-		console.log("stalles_detail", stalles_detail);
+		const {customers_detail} = await service.sCustomer.findAll();
 		await ctx.render("queryStall", {
 			"stalles_detail": stalles_detail,
 			"name": this.ctx.session.name ? this.ctx.session.name : null,
@@ -290,87 +107,15 @@ class HomeController extends Controller {
 			"max": stallAll.length,
 			"page": 1,
 			"pageCount": pageCount,
-			"url":url
-		});
-	}
-
-	async queryType(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		let {market_type, floor, stall_name, customer_name} = ctx.query;
-		const {category} = ctx.params;
-		console.log("market_type", market_type);
-		console.log('floor', floor);
-		console.log('stall_name', stall_name);
-		console.log('customer_name', customer_name);
-		const limit = 10;
-		const offset = 0;
-		const options = {
-			where:{},
-			"limit": limit,
-			"offset": offset,
-			"order": [
-				["updated_at", "DESC"]
-			]
-		};
-		const options2 = {
-			where:{},
-			"order": [
-				["updated_at", "DESC"]
-			]
-		};
-		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
-		if(market_type != ""){
-            options.where.market_type = {'$like': `%${market_type}%`};
-            options2.where.market_type = {'$like': `%${market_type}%`};
-        }
-        if(floor != ""){
-            options.where.floor = {'$like': `%${floor}%`};
-            options2.where.floor = {'$like': `%${floor}%`};
-        }
-        if(stall_name != ""){
-            options.where.stall_name = {'$like': `%${stall_name}%`};
-            options2.where.stall_name = {'$like': `%${stall_name}%`};
-        }
-        if(customer_name != ""){
-            options.where.customer_name = {'$like': `%${customer_name}%`};
-            options2.where.customer_name = {'$like': `%${customer_name}%`};
-        }
-		if(category == "1"){
-			options.where.customer_type = "档主";
-			options2.where.customer_type = "档主";
-		}else if(category == "2"){
-			options.where.customer_type = "租客";
-			options2.where.customer_type = "租客";
-		}
-        console.log("options", options);
-		const stallAll = await MStall.findAll({});
-		const stalles = await MStall.findAll(options);
-		const stalles2 = await MStall.findAll(options2);
-		const pageCount = Math.ceil(stalles2.length/10);
-		const stalles_detail = [];
-		for(let stall of stalles){
-			const stall_detail = ctx.helper.getAttributes(stall, [
-			"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
-			stalles_detail.push(stall_detail);
-		}
-		console.log("stalles_detail", stalles_detail);
-		await ctx.render("queryStallType", {
-			"stalles_detail": stalles_detail,
-			"name": this.ctx.session.name ? this.ctx.session.name : null,
-			"type": this.ctx.session.type,
-			"max": stallAll.length,
-			"page": 1,
-			"pageCount": pageCount,
 			"url":url,
-			"category": category
+			"customers": customers_detail
 		});
 	}
 
-	async queryTypeShow(){
-		const {ctx} = this;
+	async show(){
+		const {ctx, service} = this;
 		const {MStall} = ctx.model;
-		let {id, category} = ctx.params;
+		let {id} = ctx.params;
 		let {market_type, floor, stall_name, customer_name} = ctx.query;
 		const limit = 10;
 		let offset;
@@ -385,51 +130,38 @@ class HomeController extends Controller {
 			"offset": offset,
 			"order": [
 				["updated_at", "DESC"]
-			]
-		};
-		const options2 = {
-			where:{},
-			"order": [
-				["updated_at", "DESC"]
-			]
+			],
+			include:[{
+				model: ctx.model.MCustomer,
+				as: "stall_cus"
+			}]
 		};
 		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
 		if(market_type != ""){
             options.where.market_type = {'$like': `%${market_type}%`};
-            options2.where.market_type = {'$like': `%${market_type}%`};
         }
         if(floor != ""){
             options.where.floor = {'$like': `%${floor}%`};
-            options2.where.floor = {'$like': `%${floor}%`};
         }
         if(stall_name != ""){
             options.where.stall_name = {'$like': `%${stall_name}%`};
-            options2.where.stall_name = {'$like': `%${stall_name}%`};
         }
         if(customer_name != ""){
             options.where.customer_name = {'$like': `%${customer_name}%`};
-            options2.where.customer_name = {'$like': `%${customer_name}%`};
         }
-		if(category == "1"){
-			options.where.customer_type = "档主";
-			options2.where.customer_type = "档主";
-		}else if(category == "2"){
-			options.where.customer_type = "租客";
-			options2.where.customer_type = "租客";
-		}
         console.log("options", options);
 		const stallAll = await MStall.findAll({});
-		const stalles = await MStall.findAll(options);
-		const stalles2 = await MStall.findAll(options2);
-		const pageCount = Math.ceil(stalles2.length/10);
+		const stalles = await MStall.findAndCountAll(options);
+		const pageCount = Math.ceil(stalles.count/limit);
 		const stalles_detail = [];
-		for(let stall of stalles){
+		for(let stall of stalles.rows){
 			const stall_detail = ctx.helper.getAttributes(stall, [
 			"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+			stall_detail.color = stall.stall_cus.color;
 			stalles_detail.push(stall_detail);
 		}
-		console.log("stalles_detail", stalles_detail);
-		await ctx.render("queryStallType", {
+		const {customers_detail} = await service.sCustomer.findAll();
+		await ctx.render("queryStall", {
 			"stalles_detail": stalles_detail,
 			"name": this.ctx.session.name ? this.ctx.session.name : null,
 			"type": this.ctx.session.type,
@@ -437,40 +169,61 @@ class HomeController extends Controller {
 			"page": parseInt(id),
 			"pageCount": pageCount,
 			"url": url,
-			"category": category
+			"customers": customers_detail
+		});
+	}
+	async addStall(){
+		const {ctx, service} = this;
+		const add_info = ctx.request.body;
+		await service.sHome.create(add_info);
+	}
+
+	async indexType(){
+		const {category} = this.ctx.params;
+		await this.ctx.redirect(`/stall/customer_type/${category}/1`);
+	}
+
+	async indexTypeShow(){
+		const {ctx, service} = this;
+		const {category, id} = ctx.params;
+		console.log("type",ctx.session.type);
+		const {max, pageCount, stalles_detail} = await service.sHome.typeShow(id, category);
+		const {customers_detail} = await service.sCustomer.findAll();
+		await ctx.render("indexType", {
+			"stalles_detail": stalles_detail,
+			"name": ctx.session.name ? ctx.session.name : null,
+			"type": ctx.session.type,
+			"max": max,
+			"page": parseInt(id),
+			"pageCount": pageCount,
+			"category": category,
+			"customers": customers_detail
+		})
+	}
+
+	async queryTypeShow(){
+		const {ctx, service} = this;
+		const {id, category} = ctx.params;
+		const query_info = ctx.query;
+		const {url, max, pageCount, stalles_detail} = await service.sHome.queryTypeShow(id, category, query_info);
+		const {customers_detail} = await service.sCustomer.findAll();
+		await ctx.render("queryStallType", {
+			"stalles_detail": stalles_detail,
+			"name": ctx.session.name ? ctx.session.name : null,
+			"type": ctx.session.type,
+			"max": max.length,
+			"page": parseInt(id),
+			"pageCount": pageCount,
+			"url": url,
+			"category": category,
+			"customers": customers_detail
 		});
 	}
 	async getCustomerInfo(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		const {id} = ctx.params;
-		const stall = await MStall.findById(id);
-		const stall_detail = ctx.helper.getAttributes(stall, [
-			"id", "customer_type", "market_type", "floor", "stall_name",
-			"customer_name", "phone", "identity_card", "remark"]);
-		const stalles = await MStall.findAll({
-			where:{
-				"market_type": stall.market_type,
-				"customer_type": stall.customer_type,
-				"stall_name": stall.stall_name,
-				"floor": stall.floor
-			},
-			attributes: ["remark", "updated_at"],
-			order:[
-				["updated_at", "DESC"]
-			]
-		});
-		const stall_time = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
-		stall_detail.remark = stall.remark+"··········"+stall_time;
-		console.log("stall_detail.remark", stall_detail.remark);
-		const remarkes = [];
-		for(let s of stalles){
-			const formatTime = moment(s.updated_at).format("YYYY-MM-DD HH:mm");
-			const remark_detail = s.remark+"··········"+formatTime;
-			remarkes.push(remark_detail);
-		}
-		console.log("remarkes", remarkes);
-		stall_detail.remarkes = remarkes;
+		const {ctx, service} = this;
+		const {category, id} = ctx.params;
+		const {stall_detail} = await service.sHome.getCustomerInfo(category, id);	
+		console.log("stall_detail", stall_detail.id);
 		ctx.body = {
 			"action": "query stall by id",
 			"info": true,
@@ -479,95 +232,27 @@ class HomeController extends Controller {
 	}
 
 	async updateCustomerInfo(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		let {id} = ctx.params;
-		const {customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark} = ctx.request.body;
-		console.log("stall_name", stall_name);
-		console.log("identity_card", identity_card);
-		await MStall.update({
-			customer_type,
-			market_type,
-			floor,
-			stall_name,
-			customer_name,
-			phone,
-			identity_card,
-			remark
-		},{
-			where: {id}
-		});
+		const {ctx, service} = this;
+		let {category, id} = ctx.params;
+		console.log("category", category);
+		console.log("id", id)
+		const updateInfo = ctx.request.body;
+		await service.sHome.updateInfo(category, id, updateInfo);
 		ctx.body = {
 			"action": "update customer info",
 			"info": true
 		}
 	}
 
-	async show(){
-		const {ctx} = this;
-		const {MStall} = ctx.model;
-		let {id} = ctx.params;
-		let {market_type, floor, stall_name, customer_name} = ctx.query;
-		const limit = 10;
-		let offset;
-		if(id>0){
-			offset = (id-1)*10;
-		}else{
-			ctx.throw(401, "id出错");
-		}
-		const options = {
-			where:{},
-			"limit": limit,
-			"offset": offset,
-			"order": [
-				["updated_at", "DESC"]
-			]
-		};
-		const options2 = {
-			where:{},
-			"order": [
-				["updated_at", "DESC"]
-			]
-		};
-		const url=`?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
-		if(market_type != ""){
-            options.where.market_type = {'$like': `%${market_type}%`};
-            options2.where.market_type = {'$like': `%${market_type}%`};
-        }
-        if(floor != ""){
-            options.where.floor = {'$like': `%${floor}%`};
-            options2.where.floor = {'$like': `%${floor}%`};
-        }
-        if(stall_name != ""){
-            options.where.stall_name = {'$like': `%${stall_name}%`};
-            options2.where.stall_name = {'$like': `%${stall_name}%`};
-        }
-        if(customer_name != ""){
-            options.where.customer_name = {'$like': `%${customer_name}%`};
-            options2.where.customer_name = {'$like': `%${customer_name}%`};
-        }
-        console.log("options", options);
-		const stallAll = await MStall.findAll({});
-		const stalles = await MStall.findAll(options);
-		const stalles2 = await MStall.findAll(options2);
-		const pageCount = Math.ceil(stalles2.length/10);
-		const stalles_detail = [];
-		for(let stall of stalles){
-			const stall_detail = ctx.helper.getAttributes(stall, [
-			"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
-			stalles_detail.push(stall_detail);
-		}
-		console.log("stalles_detail", stalles_detail);
-		await ctx.render("queryStall", {
-			"stalles_detail": stalles_detail,
-			"name": this.ctx.session.name ? this.ctx.session.name : null,
-			"type": this.ctx.session.type,
-			"max": stallAll.length,
-			"page": parseInt(id),
-			"pageCount": pageCount,
-			"url": url
-		});
-	}
+	
 }
 
 module.exports = HomeController;
+
+
+
+/*
+	导入的时候也是选择类型，再导入，
+	一个表档主表 再加一个租客表
+
+*/

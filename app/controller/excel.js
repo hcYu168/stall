@@ -16,43 +16,8 @@ class excelController extends Controller{
 
 	async export(){
 		const {ctx, service} = this;
-		const {start, end} = ctx.params;
-		console.log("start", start);
-		console.log("end", end);
-		const {MStall} = ctx.model;
-		const conf = {
-			"name": "sheet1",
-			"data": [["客户", "市场", "楼层", "档口", "姓名", "电话", "身份证", "备注"]]
-		};
-
-		const stalles = await MStall.findAll({
-			where:{
-				'id': {
-					'$between': [start, end]
-				}
-			}
-		});
-		for(let stall of stalles){
-			const s = [];
-			s.push(stall.customer_type);
-			s.push(stall.market_type);
-			s.push(stall.floor);
-			s.push(stall.stall_name);
-			s.push(stall.customer_name);
-			s.push(stall.phone);
-			s.push(stall.identity_card);
-			s.push(stall.remark);
-			console.log('sss', s)
-			conf.data.push(s);
-		}
-		const buffer = xlsx.build([conf]);
-		const fileName = (new Date()).getTime();
-		await fs.writeFileSync(`${fileName}.xlsx`,buffer,{'flag':'w'});
-		const filePath = path.join(__dirname, `../../${fileName}.xlsx`);
-		console.log("filePath", filePath);
-		ctx.attachment(filePath);
-		await send(ctx, `${fileName}.xlsx`);
-		await fs.unlinkSync(filePath);
+		const {category, start, end} = ctx.params;
+		await service.sFile.export(category, start, end);
 	}
 }
 module.exports = excelController;

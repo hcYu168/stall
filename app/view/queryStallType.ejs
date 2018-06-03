@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
     <title>Stall</title>
 
     <!-- Bootstrap Core CSS -->
@@ -30,67 +31,65 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <style type="text/css">
-        @media (min-width:768px) {  
-            .container {  
-                width: 750px  
-            }
-            table{
-                table-layout: fixed;
-            }
-            td{
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }   
+<style type="text/css">
+    @media (min-width:768px) {  
+        .container {  
+            width: 750px  
+        }
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }   
+    }  
+      
+    @media (min-width:992px) {  
+        .container {  
+            width: 970px  
+        } 
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }  
-          
-        @media (min-width:992px) {  
-            .container {  
-                width: 970px  
-            } 
-            table{
-                table-layout: fixed;
-            }
-            td{
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }  
+    }  
+      
+    @media (min-width:1200px) {  
+        .container {  
+            width: 1170px  
         }  
-          
-        @media (min-width:1200px) {  
-            .container {  
-                width: 1170px  
-            }  
-            table{
-                table-layout: fixed;
-            }
-            td{
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            } 
-        }  
-        @media (min-width:1200px) {  
-            .container {  
-                width: auto  
-            } 
-            table{
-                table-layout: fixed;
-            }
-            td{
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            } 
-        }  
-    </style>
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        } 
+    }  
+    @media (min-width:1200px) {  
+        .container {  
+            width: auto  
+        } 
+        table{
+            table-layout: fixed;
+        }
+        td{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        } 
+    }  
+</style>
 </head>
-<!-- <script type="text/javascript" src= "/public/jquery-1.11.3.min.js"></script> -->
-<body>
-    <div id="wrapper">
-        
+<body class=".container">
+    <div id="wrapper">     
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
@@ -111,7 +110,7 @@
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
-                        <li><a href="/admin/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="/stall/admin/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -144,6 +143,9 @@
                         <li id="content">
                             <a href="/admin">用户管理<span class="fa arrow"></span></a>
                         </li>
+                        <li id="customer">
+                            <a href="/customer"></i>客户管理<span class="fa arrow"></span></a>
+                        </li>
                         <% }else if(type == "admin"){%>
                             <li id="content">
                                 <a href="/stall">档口管理<span class="fa arrow"></span></a>
@@ -162,10 +164,18 @@
                     <h2 class="page-header">档口列表</h2>
                 </div>
                 <!-- /.col-lg-12 -->
-                <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 1%;">
+                    <label>选择客户类型：</label>
+                    <select id="queryCus" name="pageType" style="width: 5%">
+                        <% for(let i=0; i<customers.length; i++){ %>
+                            <option id="<%= customers[i].id%>"><%= customers[i].name%></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top: 1%;">
                     <% if(type == "superAdmin"){%>
                     <div class="col-lg-2 col-md-2 col-sm-2">
-                        <input type="file" id="file1" >
+                        <input type="file" id="file1">
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-3">
                         <button class="btn btn-large btn-primary" type="button" id="importBtn">导入</button>
@@ -187,124 +197,124 @@
                     </div>
                     <% } %>
                 </div>
-                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 15px;">
+                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 15px;margin-top: 1%;">
                     <button class="btn btn-large btn-primary" type="button" id="addBtn" onclick="addMsg()">添加</button>
                 </div>
             </div>
             <div class="row" style="margin-top: 2%;">
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    <p>
+                    <% if(category == '1'){ %>
                         <input type="text" id="market_type" placeholder="请输入市场" style="margin-right: 2%">
                         <input type="text" id="floor" placeholder="请输入楼层" style="margin-right: 2%">
                         <input type="text" id="stall_name" placeholder="请输入档口号" style="margin-right: 2%">
                         <input type="text" id="customer_name" placeholder="请输入姓名" style="margin-right: 2%">
+                    <% }else if(category == '2'){ %>
+                        <input type="text" id="renter_market" placeholder="请输入意向市场" style="margin-right: 2%">
+                        <input type="text" id="renter_stall" placeholder="请输入意向档口" style="margin-right: 2%">
+                        <input type="text" id="renter_name" placeholder="请输入姓名" style="margin-right: 2%">
+                        <input type="text" id="renter_date" placeholder="请输入日期" style="margin-right: 2%" disabled="true">
+                    <% }%>
                         <button class="btn btn-large btn-primary" type="button" id="search">搜索</button>
-                    </p>
                 </div>
             </div>
             <div class="row" style="margin-top: 2%;">
-                <div class="col-lg-8 col-md-8 col-sm-8">
+                <div class="col-lg-10 col-md-10 col-sm-10">
                     <table class="table table-striped">
-                        <!-- <tr>
-                            <td><h4>客户</h4></td>
-                            <td><h4>市场</h4></td>
-                            <td><h4>楼层</h4></td>
-                            <td><h4>档口</h4></td>
-                            <td><h4>姓名</h4></td>
-                            <td><h4>电话</h4></td>
-                            <td><h4>备注</h4></td>
-                            <td><h4>操作</h4></td>
-                        </tr> -->
                         <tr>
                             <div>
                                 <ul class="nav navbar-nav">
-                                    <td>
+                                    <td style="overflow:visible;">
                                         <li class="dropdown" style="list-style: none;">
                                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                                <h4>客户<b class="caret"></b></h4>
+                                                <%if(category == "1"){%>
+                                                    <h4>档主<b class="caret"></b></h4>
+                                                <% }else if(category == "2"){ %>
+                                                    <h4>租客<b class="caret"></b></h4>
+                                                <% }%>
+                                                
                                             </a>
                                             <ul class="dropdown-menu">
-                                                <li><a href="/query/stall<%= url%>">全部</a></li>
-                                                <li><a href="/query/stall/customer_type/1<%= url%>">档主</a></li>
-                                                <li><a href="/query/stall/customer_type/2<%= url%>">租客</a></li>
+                                                <% for(let i=0; i<customers.length; i++){ %>
+                                                <li><a href="/stall/customer_type/<%= customers[i].id%>"><%= customers[i].name%></a></li>
+                                                <% }%>
                                             </ul>
                                         </li>
                                     </td>
-                                    <td><h4>市场</h4></td>
-                                    <td><h4>楼层</h4></td>
-                                    <td><h4>档口</h4></td>
-                                    <td><h4>备注</h4></td>
-                                    <td><h4>操作</h4></td>
+                                    <%if(category == "1"){%>
+                                        <td><h4>市场</h4></td>
+                                        <td><h4>楼层</h4></td>
+                                        <td><h4>档口</h4></td>
+                                        <td><h4>备注</h4></td>
+                                        <td><h4>操作</h4></td>
+                                    <% }else if(category == "2"){ %>
+                                        <td><h4>姓名</h4></td>
+                                        <td><h4>意向市场</h4></td>
+                                        <td><h4>意向档口</h4></td>
+                                        <td><h4>日期</h4></td>
+                                        <td><h4>操作</h4></td>
+                                    <% }%>
                                 </ul>
                             </div>  
                         </tr>
                         <% for(let i=0; i< stalles_detail.length; i++){ %>
-                            <% if(stalles_detail[i].customer_type == "档主"){ %>
-                                <tr  style="background-color: lightblue;">
+                            <tr style="background-color: <%=stalles_detail[i].color%>;">
+                                <% if(category == "1"){%>
                                     <td><h4><%= stalles_detail[i].customer_type %></h4></td>
                                     <td><h4><%= stalles_detail[i].market_type %></h4></td>
                                     <td><h4><%= stalles_detail[i].floor %></h4></td>
                                     <td><h4><%= stalles_detail[i].stall_name%></h4></td>
-                                    <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
-                                   <!--  <td><h4><%= stalles_detail[i].phone%></h4></td> -->
                                     <td><h4><%= stalles_detail[i].remark%></h4></td>
-                                    <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
-                                    <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
-                                    </td>
-                                </tr>
-                            <% }else{ %>
-                                <tr>
+                                <%}else if(category == "2"){%>
                                     <td><h4><%= stalles_detail[i].customer_type %></h4></td>
-                                    <td><h4><%= stalles_detail[i].market_type %></h4></td>
-                                    <td><h4><%= stalles_detail[i].floor %></h4></td>
-                                    <td><h4><%= stalles_detail[i].stall_name%></h4></td>
-                                    <!-- <td><h4><%= stalles_detail[i].customer_name%></h4></td> -->
-                                    <!-- <td><h4><%= stalles_detail[i].phone%></h4></td> -->
-                                    <td><h4><%= stalles_detail[i].remark%></h4></td>
-                                    <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= stalles_detail[i].id%>)">查看</button>
-                                    <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= stalles_detail[i].id%>)">修改</button>
-                                    </td>
-                                </tr>
-                            <% } %>
+                                    <td><h4><%= stalles_detail[i].name %></h4></td>
+                                    <td><h4><%= stalles_detail[i].IntentionToMarket%></h4></td>
+                                    <td><h4><%= stalles_detail[i].IntentionToStall%></h4></td>
+                                    <td><h4><%= stalles_detail[i].date %></h4></td>
+                                <% } %>
+                                <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= category%>,<%= stalles_detail[i].id%>)">查看</button>
+                                <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= category%>, <%= stalles_detail[i].id%>)">修改</button>
+                                </td>
+                            </tr>
                         <% } %>
                     </table>
                 </div>
             </div>
+            <% if(type == "superAdmin"){%>
             <div class="col-lg-10 col-md-10 col-sm-10">
                 <nav aria-label="Page navigation">
                   <ul class="pagination" id="page">
                     <% if(page > 1){%>
                         <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page-1 %><%= url%>" aria-label="Previous">
+                          <a href="/stall/customer_type/<%= category%>/<%= page-1 %><%=url%>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
                     <% }else{ %>
                         <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page %><%= url%><%= url%>" aria-label="Previous">
+                          <a href="/stall/customer_type/<%= category%>/<%= page %><%=url%>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                           </a>
                         </li>
                     <% }%>
                     <% if(pageCount <= 20){%>
                         <%for(var i=1; i<=pageCount; i++){%>
-                            <li><a href="/query/stall/customer_type/<%= category%>/<%= i %><%= url%>"><%= i %></a></li>
+                            <li><a href="/stall/customer_type/<%= category%>/<%= i %><%=url%>"><%= i %></a></li>
                         <% }%>
                     <%}else if(pageCount>20){%>
                         <%for(var i=1; i<20; i++){%>
-                            <li><a href="/query/stall/customer_type/<%= category%>/<%= i %><%= url%>"><%= i %></a></li>
+                            <li><a href="/stall/customer_type/<%= category%>/<%= i %><%=url%>"><%= i %></a></li>
                         <% }%>
                         <li id="more"><a href="#">...</a></li>
                     <%}%>
                     <% if(page < pageCount){%>
                         <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page+1 %><%= url%>" aria-label="Next">
+                          <a href="/stall/customer_type/<%= category%>/<%= page+1 %><%=url%>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
                         </li>
                     <% }else{ %>
                         <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page %><%= url%>" aria-label="Next">
+                          <a href="/stall/customer_type/<%= category%>/<%= page %><%=url%>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                           </a>
                         </li>
@@ -312,6 +322,7 @@
                   </ul>
                 </nav>
             </div>
+            <% }%>
         </div>
         <!-- /#page-wrapper -->
 
@@ -326,7 +337,10 @@
                     </div>
                     <div class="form-group">
                         <label>客户：</label>
-                        <input type="text" class="form-control" id="add_customer_type" style="width: 60%;">
+                        <select id="cus" class="cus">
+                            <option id='1'>档主</option>
+                            <option id='2'>租客</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>市场：</label>
@@ -364,6 +378,56 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
                     <button type="button" id="addSubmit" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addRenterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">                 
+                    <div class="form-group">
+                        <h2>客户详情</h2>
+                    </div>
+                    <div class="form-group">
+                        <label>客户：</label>
+                        <select id="renter_cus" class="renter_cus">
+                            <option id='2'>租客</option>
+                            <option id='1'>档主</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label >姓名：</label>
+                        <input type="text" class="form-control" id="add_renter_name" style="width: 60%;" >
+                    </div>
+                    <div class="form-group">
+                        <label >号码1：</label>
+                        <input type="text" class="form-control" id="add_renter_phone1" style="width: 60%;" >
+                    </div>
+                    <div class="form-group">
+                        <label >号码2：</label>
+                        <input type="text" class="form-control" id="add_renter_phone2" style="width: 60%;" >
+                    </div>
+                    <div class="form-group">
+                        <label >目前经营位置：</label>
+                        <input type="text" class="form-control" id="add_currentPosition" style="width: 60%;" >
+                    </div>
+                    <div class="form-group">
+                        <label >意向市场：</label>
+                        <input type="text" class="form-control" id="add_IntentionToMarket" style="width: 60%;" >
+                    </div>
+                     <div class="form-group">
+                        <label >意向档口：</label>
+                        <input type="text" class="form-control" id="add_IntentionToStall" style="width: 60%;" >
+                    </div>
+                    <div class="form-group">
+                        <label >备注：</label>
+                        <input class="form-control" id="add_renter_remark" style="width: 60%;" >
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="addRenterSubmit" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>添加</button>
                 </div>
             </div>
         </div>
@@ -413,6 +477,113 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="renterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">                 
+                    <div class="form-group">
+                        <h2>客户详情</h2>
+                    </div>
+                    <div class="form-group" style="display: none">
+                        <input type="text" class="form-control" id="renter_customer_id" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label>客户：</label>
+                        <input type="text" class="form-control" id="renter_customer_type" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >姓名：</label>
+                        <input type="text" class="form-control" id="renter_name" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >号码1：</label>
+                        <input type="text" class="form-control" id="renter_phone1" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >号码2：</label>
+                        <input type="text" class="form-control" id="renter_phone2" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >目前经营位置：</label>
+                        <input type="text" class="form-control" id="currentPosition" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >意向市场：</label>
+                        <input type="text" class="form-control" id="IntentionToMarket" style="width: 60%;" disabled="true">
+                    </div>
+                     <div class="form-group">
+                        <label >意向档口：</label>
+                        <input type="text" class="form-control" id="IntentionToStall" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >备注：</label>
+                        <input class="form-control" id="renter_remark" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >备注记录：</label>
+                        <textarea class="form-control" id="renter_remarkes" style="width: 60%; height: 150px" disabled="true"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="updateRenterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">                 
+                    <div class="form-group">
+                        <h2>客户详情</h2>
+                    </div>
+                    <div class="form-group" style="display: none">
+                        <input type="text" class="form-control" id="update_renter_customer_id" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label>客户：</label>
+                        <input type="text" class="form-control" id="update_renter_customer_type" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >姓名：</label>
+                        <input type="text" class="form-control" id="update_renter_name" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >号码1：</label>
+                        <input type="text" class="form-control" id="update_renter_phone1" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >号码2：</label>
+                        <input type="text" class="form-control" id="update_renter_phone2" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >目前经营位置：</label>
+                        <input type="text" class="form-control" id="update_currentPosition" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >意向市场：</label>
+                        <input type="text" class="form-control" id="update_IntentionToMarket" style="width: 60%;">
+                    </div>
+                     <div class="form-group">
+                        <label >意向档口：</label>
+                        <input type="text" class="form-control" id="update_IntentionToStall" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >备注：</label>
+                        <input class="form-control" id="update_renter_remark" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >备注记录：</label>
+                        <textarea class="form-control" id="update_renter_remarkes" style="width: 60%; height: 150px"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="updateRenterSubmit" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
                 </div>
             </div>
         </div>
@@ -472,16 +643,35 @@
         </div>
     <script type="text/javascript">
         $(document).ready(function(){
+            const category = '<%= category%>';
+            $("#cus").change(function(){
+                if($(this).val() == "租客"){
+                    $(".cus").val("档主");
+                    $('#addModal').modal('hide');
+                    $('#addRenterModal').modal({backdrop: 'static', keyboard: false});
+                }
+            });
+            $("#renter_cus").change(function(){
+                if($(this).val() == "档主"){
+                    $(".renter_cus").val("租客");
+                    $('#addRenterModal').modal('hide');
+                    $('#addModal').modal({backdrop: 'static', keyboard: false});
+                }
+            });
             $('#search').click(function(){
-                let market_type = $('#market_type').val();
-                let floor = $('#floor').val();
-                let stall_name = $('#stall_name').val();
-                let customer_name = $('#customer_name').val();
-                console.log("market_type", market_type);
-                console.log("floor", floor);
-                console.log("stall_name", stall_name);
-                console.log('customer_name', customer_name);
-                window.location.href = `/query/stall?market_type=${market_type}&floor=${floor}&stall_name=${stall_name}&customer_name=${customer_name}`;
+                if(category == '1'){     
+                    let market_type = $('#market_type').val();
+                    let stall_name = $('#stall_name').val();
+                    let customer_name = $('#customer_name').val();
+                    let floor = $('#floor').val();
+                    window.location.href = `/query/stall/customer_type/1/1?m=${market_type}&f=${floor}&s=${stall_name}&c=${customer_name}`;
+                }else if(category == '2'){
+                    let renter_market = $('#renter_market').val();
+                    let renter_stall = $('#renter_stall').val();
+                    let renter_name = $('#renter_name').val();
+                    let renter_date = $('#renter_date').val();
+                    window.location.href = `/query/stall/customer_type/2/1?m=${renter_market}&d=${renter_date}&s=${renter_stall}&c=${renter_name}`;
+                }
             });
 
             $('#importBtn').click(function(){
@@ -490,10 +680,12 @@
                 if(file.files[0] == "" || file.files[0] == undefined){
                     alert("请先选择文件");
                 }else{   
+                    const customer_type = $("#queryCus option:selected").text()
+                    const customer_id = $("#queryCus").find("option:selected").attr("id")   
                     const formData = new FormData();
+                    formData.append("customer_type", customer_type);
+                    formData.append("customer_id", customer_id);
                     formData.append("excel", file.files[0]);
-                    console.log("import", file);
-                    console.log("import2", file.files[0]);
                     $.ajax({
                         url: "/stall/excel/import",
                         type: "post",
@@ -504,7 +696,7 @@
                             if(result.info){
                                 setTimeout(function(){
                                     alert("导入成功");
-                                    window.location.href= "/stall";
+                                    window.location.href= "/stall/customer_type/"+customer_id;
                                 }, 3000);
                             }
                         },
@@ -548,7 +740,7 @@
                 }             
                 console.log("remark", remark);
                 $.ajax({
-                    url: "/query/stall/"+id,
+                    url: "/query/stall/1/"+id,
                     type: "put",
                     data: {
                         "customer_type": customer_type,
@@ -563,7 +755,7 @@
                     success: function(result){
                         if(result.info){
                             alert("修改成功");
-                            window.location.href= "/stall"
+                           // window.location.href= "/stall/"+page
                         }
                     },
                     error: function(err){
@@ -572,8 +764,49 @@
                     }
                 });
             })
+            $('#updateRenterSubmit').click(function(){
+                const id = $("#update_renter_customer_id").val();
+                const customer_type = $("#update_renter_customer_type").val();
+                const name= $("#update_renter_name").val();
+                const phone1 = $("#update_renter_phone1").val();
+                const phone2 = $("#update_renter_phone2").val();
+                const currentPosition = $("#update_currentPosition").val();
+                const IntentionToMarket = $("#update_IntentionToMarket").val();
+                const IntentionToStall = $("#update_IntentionToStall").val();
+                let remark = $("#update_renter_remark").val();
+                if(remark.indexOf(".">0)){
+                    remark = remark.split("·");
+                    remark = remark[0]+""
+                }  
+                $.ajax({
+                    url: "/query/stall/2/"+id,
+                    type: "put",
+                    data: {
+                        "customer_type": customer_type,
+                        "name": name,
+                        "phone1": phone1,
+                        "phone2":phone2,
+                        "currentPosition": currentPosition,
+                        "IntentionToMarket": IntentionToMarket,
+                        "IntentionToStall": IntentionToStall,
+                        "remark": remark
+                    },
+                    success: function(result){
+                        if(result.info){
+                            alert("修改成功");
+                           // window.location.href= "/stall/"+page
+                        }
+                    },
+                    error: function(err){
+                        alert("修改失败");
+                        console.log(err);
+                    }
+                });
+            });
+
             $('#addSubmit').click(function(){
-                const customer_type = $("#add_customer_type").val();
+                const customer_type = $("#cus option:selected").text()
+                const customer_id = $("#cus").find("option:selected").attr("id")
                 const market_type = $("#add_market_type").val();
                 const floor = $("#add_floor").val();
                 const stall_name = $("#add_stall_name").val();
@@ -584,6 +817,7 @@
                 const identity_card = $("#add_identity").val();
                 const remark = $("#add_remark").val();
                 $.post("/stall/add", {
+                    "customer_id": customer_id,
                     "customer_type":customer_type,
                     "market_type" : market_type,
                     "floor": floor,
@@ -595,17 +829,44 @@
                 },function(result){
                     if(result.info){
                         alert("添加成功");
-                        window.location.href="/stall"
+                        window.location.href="/stall/customer_type/1"
                     }else{
                         alert("该记录已经存在了");
                     }
                 })
             });
-
+            $('#addRenterSubmit').click(function(){
+                const customer_type = $("#renter_cus option:selected").text()
+                const customer_id = $("#renter_cus").find("option:selected").attr("id")
+                const name= $("#add_renter_name").val();
+                const phone1 = $("#add_renter_phone1").val();
+                const phone2 = $("#add_renter_phone2").val();
+                const currentPosition = $("#add_currentPosition").val();
+                const IntentionToMarket = $("#add_IntentionToMarket").val();
+                const IntentionToStall = $("#add_IntentionToStall").val();
+                const remark = $("#add_renter_remark").val();
+                $.post("/stall/add", {
+                    "customer_id": customer_id,
+                    "customer_type":customer_type,
+                    "name" : name,
+                    "phone1": phone1,
+                    "phone2": phone2,
+                    "currentPosition": currentPosition,
+                    "IntentionToMarket": IntentionToMarket,
+                    "IntentionToStall": IntentionToStall,
+                    "remark": remark
+                },function(result){
+                    if(result.info){
+                        alert("添加成功");
+                        window.location.href="/stall/customer_type/2"
+                    }else{
+                        alert("该记录已经存在了");
+                    }
+                })
+            });
             $('#more').click(function(){
                 let pageCount = "<%= pageCount%>";
-                let catgeory = "<%= category%>";
-                let url = "<%= url%>"
+                let category = "<%= category%>";
                 console.log("pageCount", pageCount);
                 $('#more').css("display", "none");
                 for(let i=20; i<pageCount; i++){
@@ -613,91 +874,124 @@
                 }
             });
         });
-        function lookMsg(id){
-            $.get("/query/stall/"+id, function(result){
+        function lookMsg(category,id){
+            $.get(`/query/stall/${category}/${id}`, function(result){
                 if(result.info){
-                    const stall_detail = result.stall_detail;
-                    console.log("stall_detail", stall_detail);
-                    $("#customer_id2").val(stall_detail.id);
-                    $("#customer_type2").val(stall_detail.customer_type);
-                    /*$("#market_type2").val(stall_detail.market_type);
-                    $("#floor2").val(stall_detail.floor);*/
-                    $("#stall_name2").val(stall_detail.market_type+"-"+stall_detail.floor+"-"+stall_detail.stall_name);
-                    $("#customer_name2").val(stall_detail.customer_name);
-                    let phone = stall_detail.phone;
-                    let phone2="";
-                    let phone3 = "";
-                    if(phone.indexOf(",")>0){
-                        phone = phone.split(",");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else if(phone.indexOf("，")>0){
-                        phone = phone.split("，");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else if(phone.indexOf("/")>0){
-                        phone = phone.split("/");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else if(phone.indexOf("、")>0){
-                        phone = phone.split("、");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else{
-                        phone2 = phone;
+                    if(category=="1"){
+                        const stall_detail = result.stall_detail;
+                        console.log("stall_detail", stall_detail);
+                        $("#customer_id2").val(stall_detail.id);
+                        $("#customer_type2").val(stall_detail.customer_type);
+                        /*$("#market_type2").val(stall_detail.market_type);
+                        $("#floor2").val(stall_detail.floor);*/
+                        $("#stall_name2").val(stall_detail.market_type+"-"+stall_detail.floor+"-"+stall_detail.stall_name);
+                        $("#customer_name2").val(stall_detail.customer_name);
+                        let phone = stall_detail.phone;
+                        let phone2="";
+                        let phone3 = "";
+                        if(phone.indexOf(",")>0){
+                            phone = phone.split(",");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else if(phone.indexOf("，")>0){
+                            phone = phone.split("，");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else if(phone.indexOf("/")>0){
+                            phone = phone.split("/");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else if(phone.indexOf("、")>0){
+                            phone = phone.split("、");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else{
+                            phone2 = phone;
+                        }
+                        $("#phone2").val(phone2);
+                        $("#phone3").val(phone3);
+                        $("#identity2").val(stall_detail.identity_card);
+                        $("#remark2").val(stall_detail.remark);
+                        const remarkes2 = stall_detail.remarkes.join(",\n");
+                        $("#remarkes2").val(remarkes2);
+                        $('#myModal').modal({backdrop: 'static', keyboard: false});
+                    }else if(category=="2"){
+                        const renter = result.stall_detail;
+                        $("#renter_customer_id").val(renter.id);
+                        $("#renter_customer_type").val(renter.customer_type);
+                        $("#renter_name").val(renter.name);
+                        $("#renter_phone1").val(renter.phone1);
+                        $("#renter_phone2").val(renter.phone2);
+                        $("#currentPosition").val(renter.currentPosition);
+                        $("#IntentionToMarket").val(renter.IntentionToMarket);
+                        $("#IntentionToStall").val(renter.IntentionToStall);
+                        $("#renter_remark").val(renter.remark);
+                        const remarkes2 = renter.remarkes.join(",\n");
+                        $("#renter_remarkes").val(remarkes2);
+                        $('#renterModal').modal({backdrop: 'static', keyboard: false});
                     }
-                    $("#phone2").val(phone2);
-                    $("#phone3").val(phone3);
-                    $("#identity2").val(stall_detail.identity_card);
-                    $("#remark2").val(stall_detail.remark);
-                    const remarkes2 = stall_detail.remarkes.join(",\n");
-                    $("#remarkes2").val(remarkes2);
-                    $('#myModal').modal();
+                    
                 }
             })
         }
-        function updateMsg(id){
-            $.get("/query/stall/"+id, function(result){
+        function updateMsg(category, id){
+            $.get(`/query/stall/${category}/${id}`, function(result){
                 if(result.info){
-                    const stall_detail = result.stall_detail;
-                    $("#update_customer_id").val(stall_detail.id);
-                    $("#update_customer_type").val(stall_detail.customer_type);
-                    $("#update_market_type").val(stall_detail.market_type);
-                    $("#update_floor").val(stall_detail.floor);
-                    $("#update_stall_name").val(stall_detail.stall_name);
-                    $("#update_customer_name").val(stall_detail.customer_name);
-                    let phone = stall_detail.phone;
-                    let phone2="";
-                    let phone3 = "";
-                    if(phone.indexOf(",")>0){
-                        phone = phone.split(",");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else if(phone.indexOf("，")>0){
-                        phone = phone.split("，");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else if(phone.indexOf("/")>0){
-                        phone = phone.split("/");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else if(phone.indexOf("、")>0){
-                        phone = phone.split("、");
-                        phone2 = phone[0]+"";
-                        phone3 = phone[1]+"" 
-                    }else{
-                        phone2 = phone;
+                    if(category == '1'){
+                        const stall_detail = result.stall_detail;
+                        $("#update_customer_id").val(stall_detail.id);
+                        $("#update_customer_type").val(stall_detail.customer_type);
+                        $("#update_market_type").val(stall_detail.market_type);
+                        $("#update_floor").val(stall_detail.floor);
+                        $("#update_stall_name").val(stall_detail.stall_name);
+                        $("#update_customer_name").val(stall_detail.customer_name);
+                        let phone = stall_detail.phone;
+                        let phone2="";
+                        let phone3 = "";
+                        if(phone.indexOf(",")>0){
+                            phone = phone.split(",");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else if(phone.indexOf("，")>0){
+                            phone = phone.split("，");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else if(phone.indexOf("/")>0){
+                            phone = phone.split("/");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else if(phone.indexOf("、")>0){
+                            phone = phone.split("、");
+                            phone2 = phone[0]+"";
+                            phone3 = phone[1]+"" 
+                        }else{
+                            phone2 = phone;
+                        }
+                        $("#update_phone2").val(phone2);
+                        $("#update_phone3").val(phone3);
+                        $("#update_identity").val(stall_detail.identity_card);
+                        $("#update_remark").val(stall_detail.remark);
+                        $('#updateModal').modal({backdrop: 'static', keyboard: false});
+                    }else if(category == '2'){
+                        const renter = result.stall_detail;
+                        $("#update_renter_customer_id").val(renter.id);
+                        $("#update_renter_customer_type").val(renter.customer_type);
+                        $("#update_renter_name").val(renter.name);
+                        $("#update_renter_phone1").val(renter.phone1);
+                        $("#update_renter_phone2").val(renter.phone2);
+                        $("#update_currentPosition").val(renter.currentPosition);
+                        $("#update_IntentionToMarket").val(renter.IntentionToMarket);
+                        $("#update_IntentionToStall").val(renter.IntentionToStall);
+                        $("#update_renter_remark").val(renter.remark);
+                        const remarkes2 = renter.remarkes.join(",\n");
+                        $("#update_renter_remarkes").val(remarkes2);
+                        $('#updateRenterModal').modal({backdrop: 'static', keyboard: false});
                     }
-                    $("#update_phone2").val(phone2);
-                    $("#update_phone3").val(phone3);
-                    $("#update_identity").val(stall_detail.identity_card);
-                    $("#update_remark").val(stall_detail.remark);
-                    $('#updateModal').modal();
                 }
             })
         }
         function addMsg(){
-            $('#addModal').modal();
+            $('#addModal').modal({backdrop: 'static', keyboard: false});
         }
     </script>
     <!-- jQuery -->

@@ -3,21 +3,24 @@ const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 const fs = require('fs');
 const XLSX = require('node-xlsx');
+const send = require('koa-send');
 const Service = require('egg').Service;
 class fileService extends Service{
 	async upload(ctx){
-		const {MStall} = ctx.model;
+		const {MStall, MRenter} = ctx.model;
 		const parts = ctx.multipart();
 	    let part;
 	    let result;
+	    const info = {};
 	    while ((part = await parts()) != null) {
 	      if (part.length) {
+	        info[part[0]] = part[1];
 	      } else {
 	        if (!part.filename) {
 	          return;
 	        }
-	        console.log('field: ' + part.fieldname);
-	        console.log('filename: ' + part.filename);
+	        console.log('field2: ' + part.fieldname);
+	        console.log('filename2: ' + part.filename);
 	        try {
 	        	const picPath = path.join(__dirname,"../public/upload/")+(new Date()).getTime()+'_'+part.filename;
 				part.pipe(fs.createWriteStream(picPath));
@@ -26,7 +29,7 @@ class fileService extends Service{
 					for(let i=0; i< excels.length; i++){
 						const data = excels[i].data;
 						for(let j=1; j< data.length; j++){
-					        let customer_type = "";
+							let customer_type = "";
 							let market_type = "";
 							let floor = "";
 							let stall_name = "";
@@ -74,12 +77,60 @@ class fileService extends Service{
 									remark = data[j][7]+"";
 								}
 							}
-							console.log("customer_type", customer_type);
-							const stall = await MStall.findOne({where:{customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark}});
-							if(!stall){
-								//console.log("stall", stall);
-								console.log("customer_type", customer_type);
-								await MStall.create({customer_type, market_type, floor, stall_name, customer_name, phone, identity_card, remark});
+							if(info.customer_id == '3'){
+								const stall = await MStall.findOne({
+									where:{
+										"customer_id": info.customer_id,
+										customer_type, 
+										market_type, 
+										floor, 
+										stall_name, 
+										customer_name, 
+										phone, 
+										identity_card, 
+										remark
+									}
+								});
+								if(!stall){
+									await MStall.create({
+										"customer_id": info.customer_id,
+										customer_type, 
+										market_type, 
+										floor, 
+										stall_name, 
+										customer_name, 
+										phone, 
+										identity_card, 
+										remark
+									});
+								}
+							}else if(info.customer_id == '5'){
+								const renter = await MRenter.findOne({
+									where:{
+										"customer_id": info.customer_id,
+										customer_type, 
+										"name": market_type, 
+										"phone1": floor, 
+										"phone2": stall_name, 
+										"currentPosition": customer_name, 
+										"IntentionToMarket": phone, 
+										"IntentionToStall": identity_card, 
+										remark
+									}
+								});
+								if(!renter){
+									await MRenter.create({
+										"customer_id": info.customer_id,
+										customer_type, 
+										"name": market_type, 
+										"phone1": floor, 
+										"phone2": stall_name, 
+										"currentPosition": customer_name, 
+										"IntentionToMarket": phone, 
+										"IntentionToStall": identity_card, 
+										remark
+									});
+								}
 							}
 						}
 					}
@@ -92,6 +143,80 @@ class fileService extends Service{
 	      }
 	    }
 		return result;
+	}
+
+	async export(category, start, end){
+		const {ctx} = this;
+		const {MStall, MRenter} = ctx.model;
+		console.log("category", category);
+		let conf;
+		if(category == "1"){
+			conf = {
+				"name": "sheet1",
+				"data": [["客户", "市场", "楼层", "档口", "姓名", "电话", "身份证", "备注"]]
+			};
+			const stalles = await MStall.findAll({
+				where:{
+					'id': {
+						'$between': [start, end]
+					}
+				}
+			});
+			for(let stall of stalles){
+				const s = [];
+				s.push(stall.customer_type);
+				s.push(stall.market_type);
+				s.push(stall.floor);
+				s.push(stall.stall_name);
+				s.push(stall.customer_name);
+				s.push(stall.phone);
+				s.push(stall.identity_card);
+				s.push(stall.remark);
+				console.log('sss', s)
+				conf.data.push(s);
+			}
+			console.log("conf", conf);
+			/*const buffer = XLSX.build([conf]);
+			const fileName = (new Date()).getTime();
+			await fs.writeFileSync(`${fileName}.xlsx`,buffer,{'flag':'w'});
+			const filePath = path.join(__dirname, `../../${fileName}.xlsx`);
+			console.log("filePath", filePath);
+			ctx.attachment(filePath);
+			await send(ctx, `${fileName}.xlsx`);
+			await fs.unlinkSync(filePath);*/
+		}else if(category == "2"){
+			conf = {
+				"name": "sheet1",
+				"data": [["客户", "姓名", "号码1", "号码2", "目前经营位置", "意向市场", "意向档口", "备注"]]
+			};
+			const renters = await MRenter.findAll({
+				where:{
+					'id': {
+						'$between': [start, end]
+					}
+				}
+			});
+			for(let renter of renters){
+				const s = [];
+				s.push(renter.customer_type);;
+				s.push(renter.name);
+				s.push(renter.phone1);
+				s.push(renter.phone2);
+				s.push(renter.currentPosition);
+				s.push(renter.IntentionToStall);
+				s.push(renter.remark);
+				console.log('sss', s)
+				conf.data.push(s);
+			}
+		}
+		const buffer = XLSX.build([conf]);
+		const fileName = (new Date()).getTime();
+		await fs.writeFileSync(`${fileName}.xlsx`,buffer,{'flag':'w'});
+		const filePath = path.join(__dirname, `../../${fileName}.xlsx`);
+		console.log("filePath", filePath);
+		ctx.attachment(filePath);
+		await send(ctx, `${fileName}.xlsx`);
+		await fs.unlinkSync(filePath);
 	}
 }
 module.exports = fileService;

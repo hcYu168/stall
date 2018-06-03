@@ -13,8 +13,7 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="/public/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <script type="text/javascript" src= "/public/vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/bootstrap/js/bootstrap.min.js"></script> -->
+   
     <!-- MetisMenu CSS -->
     <link href="/public/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
@@ -23,7 +22,9 @@
 
     <!-- Custom Fonts -->
     <link href="/public/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src= "/public/vendor/jquery/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="/public/dist/css/bootstrap-colorpicker.css">
+
+   
 </head>
 <body>
     <div id="wrapper">
@@ -93,7 +94,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    <h2 class="page-header">用户列表</h2>
+                    <h2 class="page-header">客户列表</h2>
                 </div>
                 <!-- /.col-lg-12 -->
                 <div class="col-lg-12 col-md-12 col-sm-12">
@@ -104,21 +105,18 @@
                 <div class="col-lg-8 col-md-8 col-sm-8">
                     <table class="table table-striped">
                         <tr>
-                            <td><h4>用户编号</h4></td>
-                            <td><h4>账号</h4></td>
-                            <td><h4>昵称</h4></td>
-                            <td><h4>密码</h4></td>
+                            <td><h4>序号</h4></td>
+                            <td><h4>客户类型</h4></td>
+                            <td><h4>颜色</h4></td>
                             <td><h4>操作</h4></td>
                         </tr>
-                        <% for(var i=0; i< users_detail.length; i++){ %>
+                        <% for(var i=0; i< customers.length; i++){ %>
                         <tr> 
-                            <td><%= users_detail[i].id %></td>
-                            <td><%= users_detail[i].account %></td>
-                            <td><%= users_detail[i].name %></td>
-                            <td><%= users_detail[i].password %></td>
+                            <td><%= customers[i].id %></td>
+                            <td><%= customers[i].name %></td>
+                            <td><%= customers[i].color %></td>
                             <td>
-                                <a href="/admin/update/<%= users_detail[i].id %>" class="update">编辑</a>|
-                                <a href="/admin/<%= users_detail[i].id %>" class="del">删除</a>
+                                <a href="/customer/update/<%= customers[i].id %>" class="update">编辑</a>
                             </td>
                         </tr>
                         <% }%>
@@ -167,18 +165,15 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
-                 
                     <div class="form-group">
-                        <label >账号：</label>
-                        <input type="text" class="form-control" id="account" style="width: 60%;">
-                    </div>
-                    <div class="form-group">
-                        <label >昵称：</label>
+                        <label >名称：</label>
                         <input type="text" class="form-control" id="name" style="width: 60%;">
                     </div>
-                    <div class="form-group">
-                        <label >密码：</label>
-                        <input type="password" class="form-control" id="password" style="width: 60%;">
+                    
+                    <label >颜色：</label>
+                    <div id="cp1" class="input-group colorpicker-component" style="width: 60%;">
+                        <input type="text" id="color" value="#00AABB" class="form-control" />
+                        <span class="input-group-addon"><i></i></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -194,16 +189,14 @@
                 <div class="modal-body">
                  
                     <div class="form-group">
-                        <label >账号：</label>
-                        <input type="text" class="form-control" id="account2" style="width: 60%;" readonly="readonly">
-                    </div>
-                    <div class="form-group">
-                        <label >昵称：</label>
+                        <label >名称：</label>
                         <input type="text" class="form-control" id="name2" style="width: 60%;">
                     </div>
-                    <div class="form-group">
-                        <label >密码：</label>
-                        <input type="password" class="form-control" id="password2" style="width: 60%;">
+                    
+                    <label>颜色：</label>
+                    <div id="cp2" class="input-group colorpicker-component" style="width: 60%;">
+                        <input type="text" id="color2" value="#00AABB" class="form-control" />
+                        <span class="input-group-addon"><i></i></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -230,32 +223,44 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    
+    <!-- jQuery -->
+    <script src="/public/vendor/jquery/jquery.min.js"></script>
+     <script type="text/javascript" src= "/public/vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src= "/public/dist/js/bootstrap-colorpicker.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/public/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/public/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/public/dist/js/sb-admin-2.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
+            $('#cp1').colorpicker();
+            $('#cp2').colorpicker();
+
             $('#add').click(function(){
-                $("#addModal").modal();
+                $("#addModal").modal({backdrop: 'static', keyboard: false});
             });
             $("#addSubmit").click(function(){
-                const account = $('#account').val();
                 const name = $('#name').val();
-                const password = $('#password').val();
-                if(account == null && acccount == ""){
-                    alert("账号请补充完整");
+                const color = $('#color').val();
+                console.log("color", color);
+                if(name == null && name == ""){
+                    alert("名称请补充完整");
                     return;
-                }else if(name == null && name == ""){
-                    alert("昵称请补充完整");
-                    return;
-                }else if(password == null && password == ""){
-                    alert("密码请补充完整");
+                }else if(color == null && color == ""){
+                    alert("颜色请补充完整");
                     return;
                 }else{
-                    $.post("/admin", {
-                        "account": account,
+                    $.post("/customer", {
                         "name": name,
-                        "password": password
+                        "color": color
                     }, function(data){
                         if(data.info == "ok"){
-                            window.location.href = "/admin";
+                            window.location.href = "/customer";
                         }
                     });
                 }
@@ -264,40 +269,32 @@
             $(".update").on("click", function(event){
                 event.preventDefault();
                 $.get(this.href, function(data){
-                    console.log(data.account);
-                    $('#account2').val(data.account);
                     $('#name2').val(data.name);
-                    $('#password2').val(data.password);
                     id = data.id;
-                    $("#updateModal").modal();
+                    $("#updateModal").modal({backdrop: 'static', keyboard: false});
                 });
             })
             $("#updateSubmit").click(function(){
-                const account = $('#account2').val();
                 const name = $('#name2').val();
-                const password = $('#password2').val();
-                if(account == null && acccount == ""){
-                    alert("账号请补充完整");
+                const color = $('#color2').val();
+                if(name == null && name == ""){
+                    alert("客户名称请补充完整");
                     return;
-                }else if(name == null && name == ""){
-                    alert("昵称请补充完整");
-                    return;
-                }else if(password == null && password == ""){
-                    alert("密码请补充完整");
+                }else if(color == null && color == ""){
+                    alert("颜色请补充完整");
                     return;
                 }else{
                     $.ajax({
-                        url: '/admin/'+id,
+                        url: '/customer/'+id,
                         type: "put",
                         data:{
-                            "account": account,
                             "name": name,
-                            "password": password
+                            "color": color
                         },
                         success: function(data){
                             if(data.info == "ok"){
                                 alert("修改成功");
-                                window.location.href= "/admin"
+                                window.location.href= "/customer"
                                 console.log(data);
                             }
                         },
@@ -307,27 +304,12 @@
                     });
                 }
             });
-            /*$(".del").on("click", function(event){
-                event.preventDefault();
-                $.ajax({
-                    url: this.href,
-                    type: "DELETE",
-                    success: function(data){
-                        alert("删除成功");
-                        window.location.href= "/admin"
-                        console.log(data);
-                    },
-                    error: function(err){
-                        console.log(err);
-                    }
-                });
-            })*/
             let delUrl = "";
             $(".del").on("click", function(event){
                 event.preventDefault();
                 delUrl = this.href;
                 console.log("delUrl", delUrl);
-                $("#deleteModal").modal();
+                $("#deleteModal").modal({backdrop: 'static', keyboard: false});
             });
             $('#deleteBtn').click(function(){
                 $.ajax({
@@ -335,7 +317,7 @@
                     type: "DELETE",
                     success: function(data){
                         alert("删除成功");
-                        window.location.href= "/admin"
+                        window.location.href= "/customer"
                         console.log(data);
                     },
                     error: function(err){
@@ -345,18 +327,6 @@
             })
         });
     </script>
-    <!-- jQuery -->
-    <script src="/public/vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/public/vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="/public/dist/js/sb-admin-2.js"></script>
-
 </body>
 
 </html>
