@@ -77,7 +77,7 @@ class fileService extends Service{
 									remark = data[j][7]+"";
 								}
 							}
-							if(info.customer_id == '3'){
+							if(info.customer_id == '1'){
 								const stall = await MStall.findOne({
 									where:{
 										"customer_id": info.customer_id,
@@ -104,7 +104,7 @@ class fileService extends Service{
 										remark
 									});
 								}
-							}else if(info.customer_id == '5'){
+							}else if(info.customer_id == '2'){
 								const renter = await MRenter.findOne({
 									where:{
 										"customer_id": info.customer_id,

@@ -188,6 +188,7 @@ class HomeController extends Controller {
 		const {category, id} = ctx.params;
 		console.log("type",ctx.session.type);
 		const {max, pageCount, stalles_detail} = await service.sHome.typeShow(id, category);
+		console.log("max", max);
 		const {customers_detail} = await service.sCustomer.findAll();
 		await ctx.render("indexType", {
 			"stalles_detail": stalles_detail,

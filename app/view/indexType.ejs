@@ -132,7 +132,7 @@
                         </li>
                         <% if(type == "superAdmin"){%>
                         <li id="content">
-                            <a href="/stall">档口管理<span class="fa arrow"></span></a>
+                            <a href="/stall/customer_type/1/1">档口管理<span class="fa arrow"></span></a>
                         </li>
                         <li id="content">
                             <a href="/admin">用户管理<span class="fa arrow"></span></a>
@@ -142,7 +142,7 @@
                         </li>
                         <% }else if(type == "admin"){%>
                             <li id="content">
-                                <a href="/stall">档口管理<span class="fa arrow"></span></a>
+                                <a href="/stall/customer_type/1/1">档口管理<span class="fa arrow"></span></a>
                             </li>
                         <% } %>
                     </ul>
@@ -158,16 +158,16 @@
                     <h2 class="page-header">档口列表</h2>
                 </div>
                 <!-- /.col-lg-12 -->
-                <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 1%;">
-                    <label>选择客户类型：</label>
-                    <select id="queryCus" name="pageType" style="width: 5%">
-                        <% for(let i=0; i<customers.length; i++){ %>
-                            <option id="<%= customers[i].id%>"><%= customers[i].name%></option>
-                        <% } %>
-                    </select>
-                </div>
                 <div class="col-lg-12 col-md-12 col-sm-12" style="margin-top: 1%;">
                     <% if(type == "superAdmin"){%>
+                    <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 1%;">
+                        <label>选择客户类型：</label>
+                        <select id="queryCus" name="pageType" style="width: 5%">
+                            <% for(let i=0; i<customers.length; i++){ %>
+                                <option id="<%= customers[i].id%>"><%= customers[i].name%></option>
+                            <% } %>
+                        </select>
+                    </div>
                     <div class="col-lg-2 col-md-2 col-sm-2">
                         <input type="file" id="file1">
                     </div>
@@ -182,14 +182,7 @@
                     <div class="col-lg-3 col-md-3 col-sm-3">
                         <button class="btn btn-large btn-primary" type="button" id="exportBtn">导出</button>
                     </div>
-                    <% }else if(type == "admin"){%>
-                    <div class="col-lg-2 col-md-2 col-sm-2">
-                        <input type="file" id="import">
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-3">
-                        <button class="btn btn-large btn-primary" type="button" id="importBtn">导入</button>
-                    </div>
-                    <% } %>
+                    <% }%>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12" style="margin-left: 15px;margin-top: 1%;">
                     <button class="btn btn-large btn-primary" type="button" id="addBtn" onclick="addMsg()">添加</button>
@@ -273,7 +266,6 @@
                     </table>
                 </div>
             </div>
-            <% if(type == "superAdmin"){%>
             <div class="col-lg-10 col-md-10 col-sm-10">
                 <nav aria-label="Page navigation">
                   <ul class="pagination" id="page">
@@ -316,7 +308,6 @@
                   </ul>
                 </nav>
             </div>
-            <% }%>
         </div>
         <!-- /#page-wrapper -->
 
