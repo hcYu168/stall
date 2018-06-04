@@ -266,7 +266,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-lg-10 col-md-10 col-sm-10">
+            <!-- <div class="col-lg-10 col-md-10 col-sm-10">
                 <nav aria-label="Page navigation">
                   <ul class="pagination" id="page">
                     <% if(page > 1){%>
@@ -307,6 +307,23 @@
                     <% }%>    
                   </ul>
                 </nav>
+            </div> -->
+            <div class="pagec col-lg-10" id="pagearea">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination" style="float: left;">
+                    </ul>
+
+                    <form class="form-inline" style="display: inline-block;margin: 20px;">
+                        <div class="form-group">
+                          <label for="pageindex">跳转到：</label>
+                          <input class="form-control" style="width: 80px;"   
+                            type="number" min="1" id="pageindex" name="pageindex" placeholder="页码"/>  
+                          <input class="btn btn-primary" type="button" onclick="openPage()" value="确定" />  
+                        </div>
+                    </form>
+
+                </nav>
+
             </div>
         </div>
         <!-- /#page-wrapper -->
@@ -626,6 +643,125 @@
                 </div>
             </div>
         </div>
+    <!-- jQuery -->
+    <script src="/public/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/public/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/public/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/public/dist/js/sb-admin-2.js"></script>
+
+    <script type="text/javascript">
+        let category = '<%= category %>'
+        let pageCount = '<%= pageCount%>'*1
+        console.log("pageCount", pageCount);
+        let page = '<%= page%>'*1
+        $(function(){
+            $(".pagination").createPage({
+              totalPage: pageCount, // 总共多少页
+              currPage: page, // 当前选中第几页
+              backFn:function(p){
+                  console.log("跳转到第："+p+" 页");
+                  window.location.href = "/stall/customer_type/"+category+"/"+p;
+              }
+            });
+        })
+      function openPage(){  
+        var pageindex=$("#pageindex").val();  
+        var maxindex= pageCount;  
+        if(isnumber(pageindex)){  
+          if(parseInt(pageindex)<=parseInt(maxindex)){  
+              console.log("跳转到第："+pageindex+" 页");
+              window.location.href = "/stall/customer_type/"+category+"/"+pageindex;
+          }  
+          else{
+            console.log("最大页数为"+maxindex+"，跳转到第："+maxindex+" 页");
+            window.location.href = "/stall/customer_type/"+category+"/"+maxindex;
+          }  
+        }  
+      }
+      //验证是否是一位数字  
+      function isnumber(data) {  
+        var regtel = /^[\d]{1,6}$/;  
+        if (regtel.test(data)) {  
+          return true;  
+        }  
+        else {  
+          return false;  
+        }  
+      }
+
+    </script>
+    <script type="text/javascript">
+        (function($){
+            var ms = {
+                init:function(totalsubpageTmep,args){
+                    return (function(){
+                        ms.fillHtml(totalsubpageTmep,args);
+                        ms.bindEvent(totalsubpageTmep,args);
+                    })();
+                },
+                //填充html
+                fillHtml:function(totalsubpageTmep,args){
+                    return (function(){
+                        totalsubpageTmep="";
+                        // 页码大于等于4的时候，添加第一个页码元素
+                        if(args.currPage!=1 && args.currPage>=4 && args.totalPage!=4) {
+                            totalsubpageTmep += "<li class='ali'><a href='javascript:void(0);' class='geraltTb_pager' data-go='' >"+1+"</a></li>";
+                        }
+                        /* 当前页码>4, 并且<=总页码，总页码>5，添加“···”*/
+                        if(args.currPage-2>2 && args.currPage<=args.totalPage && args.totalPage>5) {
+                            totalsubpageTmep += "<li class='ali'><a href='javascript:void(0);' class='geraltTb_' data-go='' >...</a></li>";
+                            console.log(totalsubpageTmep);
+                        }
+                        /* 当前页码的前两页 */
+                        var start = args.currPage-2;
+                        /* 当前页码的后两页 */
+                        var end = args.currPage+2;
+
+                        if((start>1 && args.currPage<4) || args.currPage==1) {
+                            end++;
+                        }
+                        if(args.currPage>args.totalPage-4 && args.currPage>=args.totalPage) {
+                            start--;
+                        }
+                        for(; start<=end; start++) {
+                            if(start<=args.totalPage && start>=1) {
+                                totalsubpageTmep += "<li class='ali'><a href='javascript:void(0);' class='geraltTb_pager' data-go='' >"+start+"</a></li>";
+                            }
+                        }
+                        if(args.currPage+2<args.totalPage-1 && args.currPage>=1 && args.totalPage>5) {
+                            totalsubpageTmep += "<li class='ali'><a href='javascript:void(0);' class='geraltTb_' data-go='' >...</a></li>";
+                        }
+
+                        if(args.currPage!=args.totalPage && args.currPage<args.totalPage-2 && args.totalPage!=4) {
+                            totalsubpageTmep += "<li class='ali'><a href='javascript:void(0);' class='geraltTb_pager' data-go='' >"+args.totalPage+"</a></li>";
+                        }
+                        $(".pagination").html(totalsubpageTmep);
+                    })();
+                },
+                //绑定事件
+                bindEvent:function(totalsubpageTmep,args){
+                    return (function(){
+                        totalsubpageTmep.on("click","a.geraltTb_pager",function(event){
+                          var current = parseInt($(this).text());
+                          ms.fillHtml(totalsubpageTmep,{"currPage":current,"totalPage":args.totalPage,"turndown":args.turndown});
+                          if(typeof(args.backFn)=="function"){
+                            args.backFn(current);
+                          }
+                        });
+                    })();
+                }
+            }
+            $.fn.createPage = function(options){       
+                ms.init(this,options);
+            }
+            })(jQuery);
+    </script>    
     <script type="text/javascript">
         $(document).ready(function(){
             const category = '<%= category%>';
@@ -977,18 +1113,6 @@
             $('#addModal').modal({backdrop: 'static', keyboard: false});
         }
     </script>
-    <!-- jQuery -->
-    <script src="/public/vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/public/vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="/public/dist/js/sb-admin-2.js"></script>
-
 </body>
 
 </html>

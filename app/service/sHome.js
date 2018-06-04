@@ -253,7 +253,7 @@ class homeService extends Service{
 					as: "stall_cus"
 				}]
 			};
-			url=`?m=${m}&f=${f}&s=${s}&c=${c}`;
+			url='?m='+m+'&f='+f+'&s='+s+'&c='+c;
 			if(m != ""){
 	            options.where.market_type = {'$like': `%${m}%`};
 	        }
@@ -313,6 +313,7 @@ class homeService extends Service{
 				stalles_detail.push(stall_detail);
 			}
 		}
+		console.log("url", url);
 		return {url, max, pageCount, stalles_detail};
 	}
 }

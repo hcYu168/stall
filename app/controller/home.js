@@ -208,6 +208,7 @@ class HomeController extends Controller {
 		const query_info = ctx.query;
 		const {url, max, pageCount, stalles_detail} = await service.sHome.queryTypeShow(id, category, query_info);
 		const {customers_detail} = await service.sCustomer.findAll();
+		console.log('url2', url);
 		await ctx.render("queryStallType", {
 			"stalles_detail": stalles_detail,
 			"name": ctx.session.name ? ctx.session.name : null,
