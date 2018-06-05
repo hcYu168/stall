@@ -50,7 +50,7 @@ class homeService extends Service{
 				stall_detail.color = stall.stall_cus.color;
 			}else if(category == "2"){
 				stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_id", "customer_type", "name",  "currentPosition", "IntentionToMarket", "IntentionToStall"]);
+				"id", "customer_id", "customer_type", "name",  "currentPosition", "IntentionToMarket", "IntentionToStall", "renter_time"]);
 				stall_detail.color = stall.renter_cus.color;
 				stall_detail.date = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
 			}			
@@ -101,11 +101,12 @@ class homeService extends Service{
 			const stall = await MRenter.findById(id);
 			stall_detail = ctx.helper.getAttributes(stall, [
 				"id", "customer_id", "customer_type", "name", "phone1", "phone2", "currentPosition", 
-				"IntentionToMarket", "IntentionToStall", "remark"]);
+				"IntentionToMarket", "IntentionToStall", "remark", "renter_time"]);
 			if(stall_detail.remark){
 				const stall_time = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
 				stall_detail.remark = stall.remark+"··········"+stall_time;
 			}
+			console.log("stall_detail", stall_detail.name);
 			const stalles = await MRenter.findAll({
 				where:{
 					"name": stall.name,
@@ -161,7 +162,7 @@ class homeService extends Service{
 			if(!renter){
 				ctx.throw(404, "找不到该信息");
 			}
-			const {customer_type, name, phone1, phone2, currentPosition, IntentionToMarket, IntentionToStall, remark} = updateInfo;
+			const {customer_type, name, phone1, phone2, currentPosition, IntentionToMarket, IntentionToStall, remark, renter_time} = updateInfo;
 			await MRenter.update({
 				customer_type,
 				name,
@@ -170,7 +171,8 @@ class homeService extends Service{
 				currentPosition,
 				IntentionToMarket,
 				IntentionToStall,
-				remark
+				remark,
+				renter_time
 			},{
 				where: {id}
 			});
@@ -197,8 +199,8 @@ class homeService extends Service{
 				}
 			}
 		}else if(add_info.customer_id == '2'){
-			const {customer_id,customer_type, name, phone1, phone2, currentPosition, IntentionToMarket, IntentionToStall, remark} = add_info;
-			const renter  = await MRenter.findOne({where:{customer_id,customer_type, name, phone1, phone2, currentPosition, IntentionToMarket, IntentionToStall, remark}});
+			const {customer_id,customer_type, name, phone1, phone2, currentPosition, IntentionToMarket, IntentionToStall, remark, renter_time} = add_info;
+			const renter  = await MRenter.findOne({where:{customer_id,customer_type, name, phone1, phone2, currentPosition, IntentionToMarket, IntentionToStall, remark, renter_time}});
 			if(!renter){
 				await MRenter.create({
 					customer_id, 
@@ -209,7 +211,8 @@ class homeService extends Service{
 					currentPosition, 
 					IntentionToMarket, 
 					IntentionToStall, 
-					remark
+					remark,
+					renter_time
 				});
 				ctx.body= {
 					"action": "create renter",
@@ -294,7 +297,7 @@ class homeService extends Service{
 	            options.where.IntentionToMarket = {'$like': `%${m}%`};
 	        }
 	        if( d != ""){
-	            options.where.updated_at = {'$like': `%${d}%`};
+	            options.where.renter_time = {'$like': `%${d}%`};
 	        }
 	        if(s != ""){
 	            options.where.IntentionToStall = {'$like': `%${s}%`};
@@ -309,7 +312,8 @@ class homeService extends Service{
 			for(let stall of stalles.rows){
 				const stall_detail = ctx.helper.getAttributes(stall, [
 				"id", "customer_type", "name", "phone1", "phone2", "IntentionToStall", "currentPosition", "IntentionToMarket", "remark"]);
-				stall_detail.color = stall.renter_cus.color
+				stall_detail.color = stall.renter_cus.color;
+				stall_detail.date = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
 				stalles_detail.push(stall_detail);
 			}
 		}

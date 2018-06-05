@@ -205,7 +205,7 @@
                         <input type="text" id="renter_market" placeholder="请输入意向市场" style="margin-right: 2%">
                         <input type="text" id="renter_stall" placeholder="请输入意向档口" style="margin-right: 2%">
                         <input type="text" id="renter_name" placeholder="请输入姓名" style="margin-right: 2%">
-                        <input type="text" id="renter_date" placeholder="请输入日期" style="margin-right: 2%" disabled="true">
+                        <input type="text" id="renter_date" placeholder="请输入日期" style="margin-right: 2%" >
                     <% }%>
                         <button class="btn btn-large btn-primary" type="button" id="search">搜索</button>
                 </div>
@@ -272,48 +272,6 @@
                     </table>
                 </div>
             </div>
-            <!-- <div class="col-lg-10 col-md-10 col-sm-10">
-                <nav aria-label="Page navigation">
-                  <ul class="pagination" id="page">
-                    <% if(page > 1){%>
-                        <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page-1 %><%=url%>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                          </a>
-                        </li>
-                    <% }else{ %>
-                        <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page %><%=url%>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                          </a>
-                        </li>
-                    <% }%>
-                    <% if(pageCount <= 20){%>
-                        <%for(var i=1; i<=pageCount; i++){%>
-                            <li><a href="/query/stall/customer_type/<%= category%>/<%= i %><%=url%>"><%= i %></a></li>
-                        <% }%>
-                    <%}else if(pageCount>20){%>
-                        <%for(var i=1; i<20; i++){%>
-                            <li><a href="/query/stall/customer_type/<%= category%>/<%= i %><%=url%>"><%= i %></a></li>
-                        <% }%>
-                        <li id="more"><a href="#">...</a></li>
-                    <%}%>
-                    <% if(page < pageCount){%>
-                        <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page+1 %><%=url%>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>
-                        </li>
-                    <% }else{ %>
-                        <li>
-                          <a href="/query/stall/customer_type/<%= category%>/<%= page %><%=url%>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>
-                        </li>
-                    <% }%>    
-                  </ul>
-                </nav>
-            </div> -->
             <div class="pagec col-lg-10" id="pagearea">
                 <nav aria-label="Page navigation">
                     <ul class="pagination" style="float: left;">
@@ -329,7 +287,6 @@
                     </form>
 
                 </nav>
-
             </div>  
         </div>
         <!-- /#page-wrapper -->
@@ -432,6 +389,10 @@
                         <label >备注：</label>
                         <input class="form-control" id="add_renter_remark" style="width: 60%;" >
                     </div>
+                    <div class="form-group">
+                        <label >时间：</label>
+                        <input class="form-control" id="add_renter_time" style="width: 60%;" >
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
@@ -505,7 +466,7 @@
                     </div>
                     <div class="form-group">
                         <label >姓名：</label>
-                        <input type="text" class="form-control" id="renter_name" style="width: 60%;" disabled="true">
+                        <input type="text" class="form-control" id="renter_names" style="width: 60%;" disabled="true">
                     </div>
                     <div class="form-group">
                         <label >号码1：</label>
@@ -530,6 +491,10 @@
                     <div class="form-group">
                         <label >备注：</label>
                         <input class="form-control" id="renter_remark" style="width: 60%;" disabled="true">
+                    </div>
+                    <div class="form-group">
+                        <label >时间：</label>
+                        <input class="form-control" id="renter_time" style="width: 60%;" disabled="true">
                     </div>
                     <div class="form-group">
                         <label >备注记录：</label>
@@ -583,6 +548,10 @@
                     <div class="form-group">
                         <label >备注：</label>
                         <input class="form-control" id="update_renter_remark" style="width: 60%;">
+                    </div>
+                    <div class="form-group">
+                        <label >时间：</label>
+                        <input class="form-control" id="update_renter_time" style="width: 60%;">
                     </div>
                     <div class="form-group">
                         <label >备注记录：</label>
@@ -904,6 +873,7 @@
                 const IntentionToMarket = $("#update_IntentionToMarket").val();
                 const IntentionToStall = $("#update_IntentionToStall").val();
                 let remark = $("#update_renter_remark").val();
+                const renter_time = $("#update_renter_time").val();
                 if(remark.indexOf(".">0)){
                     remark = remark.split("·");
                     remark = remark[0]+""
@@ -919,7 +889,8 @@
                         "currentPosition": currentPosition,
                         "IntentionToMarket": IntentionToMarket,
                         "IntentionToStall": IntentionToStall,
-                        "remark": remark
+                        "remark": remark,
+                        "renter_time": renter_time
                     },
                     success: function(result){
                         if(result.info){
@@ -975,6 +946,7 @@
                 const IntentionToMarket = $("#add_IntentionToMarket").val();
                 const IntentionToStall = $("#add_IntentionToStall").val();
                 const remark = $("#add_renter_remark").val();
+                const renter_time = $("#add_renter_time").val();
                 $.post("/stall/add", {
                     "customer_id": customer_id,
                     "customer_type":customer_type,
@@ -984,7 +956,8 @@
                     "currentPosition": currentPosition,
                     "IntentionToMarket": IntentionToMarket,
                     "IntentionToStall": IntentionToStall,
-                    "remark": remark
+                    "remark": remark,
+                    "renter_time": renter_time
                 },function(result){
                     if(result.info){
                         alert("添加成功");
@@ -993,15 +966,6 @@
                         alert("该记录已经存在了");
                     }
                 })
-            });
-            $('#more').click(function(){
-                let pageCount = "<%= pageCount%>";
-                let category = "<%= category%>";
-                console.log("pageCount", pageCount);
-                $('#more').css("display", "none");
-                for(let i=20; i<pageCount; i++){
-                    $('#page li').eq(i).after("<li><a href='/query/stall/customer_type/"+category+"/"+i+url+"'>"+i+"</a></li>")
-                }
             });
         });
         function lookMsg(category,id){
@@ -1049,7 +1013,7 @@
                         const renter = result.stall_detail;
                         $("#renter_customer_id").val(renter.id);
                         $("#renter_customer_type").val(renter.customer_type);
-                        $("#renter_name").val(renter.name);
+                        $("#renter_names").val(renter.name);
                         $("#renter_phone1").val(renter.phone1);
                         $("#renter_phone2").val(renter.phone2);
                         $("#currentPosition").val(renter.currentPosition);
@@ -1058,6 +1022,7 @@
                         $("#renter_remark").val(renter.remark);
                         const remarkes2 = renter.remarkes.join(",\n");
                         $("#renter_remarkes").val(remarkes2);
+                        $("#renter_time").val(renter.renter_time);
                         $('#renterModal').modal({backdrop: 'static', keyboard: false});
                     }
                     
@@ -1115,6 +1080,7 @@
                         $("#update_renter_remark").val(renter.remark);
                         const remarkes2 = renter.remarkes.join(",\n");
                         $("#update_renter_remarkes").val(remarkes2);
+                        $("#update_renter_time").val(renter.renter_time);
                         $('#updateRenterModal').modal({backdrop: 'static', keyboard: false});
                     }
                 }

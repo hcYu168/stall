@@ -15,7 +15,8 @@ module.exports = app =>{
 		currentPosition: {type: STRING},
 		IntentionToMarket: {type: STRING},
 		IntentionToStall: {type: STRING},
-		remark: {type: STRING}
+		remark: {type: STRING},
+		renter_time: {type: STRING}
 	},{
 		paranoid: true,
 		tableName: "renter",

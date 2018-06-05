@@ -105,6 +105,12 @@ class fileService extends Service{
 									});
 								}
 							}else if(info.customer_id == '2'){
+								let renter_time = "";
+								if(data[j].length >= 9){
+									if(data[j][8] != undefined){
+										renter_time = data[j][8]+"";
+									}
+								}
 								const renter = await MRenter.findOne({
 									where:{
 										"customer_id": info.customer_id,
@@ -115,7 +121,8 @@ class fileService extends Service{
 										"currentPosition": customer_name, 
 										"IntentionToMarket": phone, 
 										"IntentionToStall": identity_card, 
-										remark
+										remark,
+										renter_time
 									}
 								});
 								if(!renter){
@@ -128,7 +135,8 @@ class fileService extends Service{
 										"currentPosition": customer_name, 
 										"IntentionToMarket": phone, 
 										"IntentionToStall": identity_card, 
-										remark
+										remark,
+										renter_time
 									});
 								}
 							}
