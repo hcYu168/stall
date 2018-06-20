@@ -236,7 +236,7 @@
                                     <% }else if(category == "2"){ %>
                                         <td><h4>姓名</h4></td>
                                         <td><h4>意向市场</h4></td>
-                                        <td><h4>意向档口</h4></td>
+                                        <td><h4>现经营位置</h4></td>
                                         <td><h4>日期</h4></td>
                                         <td><h4>操作</h4></td>
                                     <% }%>
@@ -255,7 +255,7 @@
                                     <td><h4><%= stalles_detail[i].customer_type %></h4></td>
                                     <td><h4><%= stalles_detail[i].name %></h4></td>
                                     <td><h4><%= stalles_detail[i].IntentionToMarket%></h4></td>
-                                    <td><h4><%= stalles_detail[i].IntentionToStall%></h4></td>
+                                    <td><h4><%= stalles_detail[i].currentPosition%></h4></td>
                                     <td><h4><%= stalles_detail[i].date %></h4></td>
                                 <% } %>
                                 <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= category%>,<%= stalles_detail[i].id%>)">查看</button>
