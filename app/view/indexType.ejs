@@ -197,7 +197,7 @@
                         <input type="text" id="customer_name" placeholder="请输入姓名" style="margin-right: 2%">
                     <% }else if(category == '2'){ %>
                         <input type="text" id="renter_market" placeholder="请输入意向市场" style="margin-right: 2%">
-                        <input type="text" id="renter_stall" placeholder="请输入意向档口" style="margin-right: 2%">
+                        <input type="text" id="renter_currentPosition" placeholder="请输入现经营位置" style="margin-right: 2%">
                         <input type="text" id="renter_name" placeholder="请输入姓名" style="margin-right: 2%">
                         <input type="text" id="renter_date" placeholder="请输入日期" style="margin-right: 2%">
                     <% }%>
@@ -237,7 +237,7 @@
                                         <td><h4>姓名</h4></td>
                                         <td><h4>意向市场</h4></td>
                                         <td><h4>现经营位置</h4></td>
-                                        <td><h4>日期</h4></td>
+                                        <td><h4>备注</h4></td>
                                         <td><h4>操作</h4></td>
                                     <% }%>
                                 </ul>
@@ -256,7 +256,7 @@
                                     <td><h4><%= stalles_detail[i].name %></h4></td>
                                     <td><h4><%= stalles_detail[i].IntentionToMarket%></h4></td>
                                     <td><h4><%= stalles_detail[i].currentPosition%></h4></td>
-                                    <td><h4><%= stalles_detail[i].date %></h4></td>
+                                    <td><h4><%= stalles_detail[i].remark %></h4></td>
                                 <% } %>
                                 <td><button class="btn btn-large btn-primary" type="button" id="look" onclick="lookMsg(<%= category%>,<%= stalles_detail[i].id%>)">查看</button>
                                 <button class="btn btn-large btn-primary" type="button" id="update" onclick="updateMsg(<%= category%>, <%= stalles_detail[i].id%>)">修改</button>
@@ -756,10 +756,10 @@
                     window.location.href = `/query/stall/customer_type/1/1?m=${market_type}&f=${floor}&s=${stall_name}&c=${customer_name}`;
                 }else if(category == '2'){
                     let renter_market = $('#renter_market').val();
-                    let renter_stall = $('#renter_stall').val();
+                    let renter_currentPosition = $('#renter_currentPosition').val();
                     let renter_name = $('#renter_name').val();
                     let renter_date = $('#renter_date').val();
-                    window.location.href = `/query/stall/customer_type/2/1?m=${renter_market}&d=${renter_date}&s=${renter_stall}&c=${renter_name}`;
+                    window.location.href = `/query/stall/customer_type/2/1?m=${renter_market}&d=${renter_date}&s=${renter_currentPosition}&c=${renter_name}`;
                 }
             });
 

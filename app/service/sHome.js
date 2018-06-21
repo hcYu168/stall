@@ -50,7 +50,7 @@ class homeService extends Service{
 				stall_detail.color = stall.stall_cus.color;
 			}else if(category == "2"){
 				stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_id", "customer_type", "name",  "currentPosition", "IntentionToMarket", "IntentionToStall", "renter_time"]);
+				"id", "customer_id", "customer_type", "name",  "currentPosition", "IntentionToMarket", "IntentionToStall", "remark", "renter_time"]);
 				stall_detail.color = stall.renter_cus.color;
 				stall_detail.date = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
 			}			
@@ -300,7 +300,7 @@ class homeService extends Service{
 	            options.where.renter_time = {'$like': `%${d}%`};
 	        }
 	        if(s != ""){
-	            options.where.IntentionToStall = {'$like': `%${s}%`};
+	            options.where.currentPosition = {'$like': `%${s}%`};
 	        }
 	        if(c != ""){
 	            options.where.name = {'$like': `%${c}%`};
