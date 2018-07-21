@@ -16,7 +16,9 @@ class excelController extends Controller{
 
 	async export(){
 		const {ctx, service} = this;
-		const {category, start, end} = ctx.params;
+		let {category, start, end} = ctx.params;
+		start = isNaN(Number(start))? 1 : Number(start);
+		end = isNaN(Number(end))? 1 : Number(end);
 		await service.sFile.export(category, start, end);
 	}
 }

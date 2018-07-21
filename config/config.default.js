@@ -7,7 +7,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1524054018280_4759';
 
   // add your config here
-  config.middleware = ['userAuth', 'adminAuth'];
+  config.middleware = ['userAuth', 'adminAuth', 'errPage'];
 
   config.adminAuth = {
       match: [
@@ -83,5 +83,8 @@ module.exports = appInfo => {
       secret: "rainchapter"
   }
 
+  config.logger = {
+    dir: path.join(appInfo.baseDir, "logs/lijie")
+  }
   return config;
 };

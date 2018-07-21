@@ -14,7 +14,7 @@ class customerService extends Service{
 			]
 		});
 		const customers_detail = [];
-		const pageCount = Math.ceil(customers.count/10);
+		const pageCount = Math.ceil(customers.count/limit);
 		for(let customer of customers.rows){
 			const customer_detail = ctx.helper.getAttributes(customer, [
 				"id", "name", "color"]);
@@ -27,12 +27,10 @@ class customerService extends Service{
 		const {ctx} = this;
 		const {MCustomer} = ctx.model;
 		const customers = await MCustomer.findAll({});
-		const customers_detail = [];
-		for(let customer of customers){
-			const customer_detail = ctx.helper.getAttributes(customer, [
+		const customers_detail = customers.map(customer =>{
+			return ctx.helper.getAttribute(customer, [
 				"id", "name"]);
-			customers_detail.push(customer_detail);
-		}
+		});
 		return {customers_detail};
 	}
 	async create(name, color){

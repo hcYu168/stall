@@ -14,9 +14,6 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="/public/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <script type="text/javascript" src= "/public/vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/bootstrap/js/bootstrap.min.js"></script> -->
-    <!-- MetisMenu CSS -->
     <link href="/public/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
@@ -25,12 +22,6 @@
     <!-- Custom Fonts -->
     <link href="/public/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src= "/public/vendor/jquery/jquery.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 <style type="text/css">
     @media (min-width:768px) {  
         .container {  
@@ -632,12 +623,10 @@
     <script type="text/javascript">
         let category = '<%= category %>'
         let pageCount = '<%= pageCount%>'*1
-        let url = "<%= url%>"
+        let url = "<%- url%>";
         if(url.indexOf('amp;')>0){
-
-        url = "<%= url%>".replace('amp;', "").replace('amp;', "").replace('amp;', "");
+            url = "<%= url%>".replace('amp;', "").replace('amp;', "").replace('amp;', "");
         }
-        console.log("url", url);
         let page = '<%= page%>'*1
       $(function(){
         $(".pagination").createPage({

@@ -7,16 +7,12 @@ class adminController extends Controller{
 	    const limit = 10;
 	    const offset = 0;
 	    const users = await MAdmin.findAndCountAll({
-	      limit,
-	      offset,
+	    	limit,
+	    	offset,
 	    });
-	    const pageCount = Math.ceil(users.count / 10);
-	    const users_detail = [];
-	    for (const user of users.rows) {
-	    	const user_detail = this.ctx.helper.getAttributes(user, [
-	        	'id', 'account', 'name', "password" ]);
-	      	users_detail.push(user_detail);
-	    }
+	    const pageCount = Math.ceil(users.count / limit);
+	    const users_detail = users.rows.map(user => this.ctx.helper.getAttributes(user, [
+	        	'id', 'account', 'name', "password" ]));
 	    await this.ctx.render('admin', {
 	     	pageCount,
 	      	users_detail,
@@ -27,57 +23,80 @@ class adminController extends Controller{
 
 	async show() {
 	    const { MAdmin } = this.ctx.model;
-	    const { id } = this.ctx.params;
+	    let { id } = this.ctx.params;
+	    id = Number(id) || 1;
 	    console.log('id', id);
-	    const limit = 5;
+	    const limit = 10;
 	    let offset = 0;
 	    if (id < 0) {
 	      this.ctx.throw(404, 'err pageId');
 	    } else if (id >= 1) {
 	      offset = (id - 1) * limit;
 	    }
-	    const users = await MAdmin.findAndCountAll({
-	      limit,
-	      offset,
-	    });
-	    const pageCount = Math.ceil(users.count / 5);
-	    const users_detail = [];
-	    for (const user of users.rows) {
-	      const user_detail = this.ctx.helper.getAttributes(user, [
-	        'id', 'account', 'name', 'password' ]);
-	      users_detail.push(user_detail);
+	    try{
+	    	const users = await MAdmin.findAndCountAll({
+		      limit,
+		      offset,
+		    });
+		    const pageCount = Math.ceil(users.count / limit);
+		    const users_detail = users.rows.map(user => this.ctx.helper.getAttributes(user, [
+		        	'id', 'account', 'name', "password" ]));
+		    await this.ctx.render('admin', {
+		      pageCount,
+		      users_detail,
+		      page: parseInt(id),
+		      name: this.ctx.session.name ? this.ctx.session.name : null,
+		    });
+	    }catch(err){
+	    	ctx.status = 400;
+	    	ctx.message = "服务错误";
+	    	return ;
 	    }
-	    await this.ctx.render('admin', {
-	      pageCount,
-	      users_detail,
-	      page: parseInt(id),
-	      name: this.ctx.session.name ? this.ctx.session.name : null,
-	    });
+	    
   	}
+
 	async create() {
 	    const { MAdmin } = this.ctx.model;
 	    const { account, name, password } = this.ctx.request.body;
-	    console.log('1111111');
-	    let user = await MAdmin.findOne({
-	      where: { account },
-	    });
-	    if (user) {
-	      this.ctx.throw(404, 'account already exist');
-	    }
-	    user = await MAdmin.create({ account, name, password });
-	    if (!user) {
-	      this.ctx.throw(404, 'created user is not success');
-	    }
-	    const updateJson = {
-	      action: 'create user',
-	      info: 'ok',
+	    const rule = {
+	    	accout: "string",
+	    	name: "string",
+	    	password: "string"
 	    };
-	    this.ctx.body = updateJson;
+	    try{
+	    	this.ctx.validate(rule, this.ctx.request.body);
+		    let user = await MAdmin.findOne({
+		      where: { account },
+		    });
+		    if (user) {
+		      this.ctx.throw(404, 'account already exist');
+		    }
+		    user = await MAdmin.create({ account, name, password });
+		    if (!user) {
+		      this.ctx.throw(404, 'created user is not success');
+		    }
+		    const updateJson = {
+		      action: 'create user',
+		      info: 'ok',
+		    };
+		    this.ctx.body = updateJson;
+	    }catch(err){
+	    	if(err.code == "invalid_param"){
+	    		this.ctx.status = 401;
+	    		this.ctx.message = "参数错误";
+	    		return;
+	    	}else{
+	    		this.ctx.status = 400;
+	    		this.ctx.message = "服务错误";
+	    		return;
+	    	}
+	    }
+	    
     }
 
     async getUserInfo() {
 	    const { MAdmin } = this.ctx.model;
-	    const { id } = this.ctx.params;
+	    let { id } = this.ctx.params;
 	    const user = await MAdmin.findById(id);
 	    if (!user) {
 	      this.ctx.throw(404, 'user not found');
@@ -89,27 +108,44 @@ class adminController extends Controller{
 
     async update() {
 	    const { MAdmin } = this.ctx.model;
-	    const { id } = this.ctx.params;
+	    let { id } = this.ctx.params;
 	    const { account, name, password } = this.ctx.request.body;
-	    console.log("das",{ account, name, password });
-	    const findUser = await MAdmin.findById(id);
-	    if (!findUser) {
-	      this.ctx.throw(404, 'user not found');
-	    }
-	    await MAdmin.update({ account, name, password },
-	      {
-	        where: { id },
-	      });
-	    const updateJson = {
-	      action: 'update user',
-	      info: 'ok',
+	    const rule = {
+	    	account: "string",
+	    	name: "string",
+	    	password: "string"
 	    };
-	    this.ctx.body = updateJson;
+	    try{
+		    ctx.validate(rule, this.ctx.request.body);
+		    const findUser = await MAdmin.findById(id);
+		    if (!findUser) {
+		      this.ctx.throw(404, 'user not found');
+		    }
+		    await MAdmin.update({ account, name, password },
+		      {
+		        where: { id },
+		      });
+		    const updateJson = {
+		      action: 'update user',
+		      info: 'ok',
+		    };
+		    this.ctx.body = updateJson;
+	    }catch(err){
+	    	if(err.code == "invalid_param"){
+	    		this.ctx.status = 401;
+	    		this.ctx.message = "参数错误";
+	    		return;
+	    	}else{
+	    		this.ctx.status = 400;
+	    		this.ctx.message = "服务错误";
+	    		return;
+	    	}
+	    }
     }
 
 	async destroy() {
 	    const { MAdmin } = this.ctx.model;
-	    const { id } = this.ctx.params;
+	    let { id } = this.ctx.params;
 	    const findUser = await MAdmin.findById(id);
 	    if (!findUser) {
 	      this.ctx.throw(404, 'user not found');
@@ -117,7 +153,6 @@ class adminController extends Controller{
 	    const user = await MAdmin.destroy({
 	      where: { id },
 	    });
-	    console.log(user);
 	    const updateJson = {
 	      action: 'delete user',
 	      info: 'ok',

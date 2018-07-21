@@ -7,13 +7,7 @@ class homeService extends Service{
 		const {MStall, MRenter} = ctx.model;
 		const type = ctx.session.type;
 		const limit = 10;
-		let offset;
-		if(id>0){
-			offset = (id-1)*10;
-		}else{
-			ctx.throw(401, "id出错");
-		}
-		const stalles_detail = [];
+		const offset = (id-1)*limit;
 		let stalles;
 		let pageCount;
 		let max;
@@ -42,20 +36,20 @@ class homeService extends Service{
 				}]
 			});
 		}
-		for(let stall of stalles.rows){
+		const stalles_detail = stalles.rows.map(stall =>{
 			let stall_detail;
 			if(category == "1"){
-				stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+				stall_detail = ctx.helper.getAttribute(stall, [
+					"id", "customer_id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
 				stall_detail.color = stall.stall_cus.color;
 			}else if(category == "2"){
-				stall_detail = ctx.helper.getAttributes(stall, [
+				stall_detail = ctx.helper.getAttribute(stall, [
 				"id", "customer_id", "customer_type", "name",  "currentPosition", "IntentionToMarket", "IntentionToStall", "remark", "renter_time"]);
 				stall_detail.color = stall.renter_cus.color;
 				stall_detail.date = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
 			}			
-			stalles_detail.push(stall_detail);
-		}
+			return stall_detail;
+		});
 		max = stalles.count;
 		pageCount = Math.ceil(max/limit);
 		return {max, pageCount, stalles_detail}	
@@ -236,11 +230,11 @@ class homeService extends Service{
 		let url;
 		let max;
 		let pageCount;
-		const stalles_detail = [];
+		let stalles;
 		if(id>0){
-			offset = (id-1)*10;
+			offset = (id-1)*limit;
 		}else{
-			ctx.throw(401, "id出错");
+			ctx.throw(401, "id 出错");
 		}
 		if(category == '1'){
 			const {m, f, s, c} = query_info;
@@ -270,14 +264,8 @@ class homeService extends Service{
 	            options.where.customer_name = {'$like': `%${c}%`};
 	        }		
 			max = await MStall.findAll({});
-			const stalles = await MStall.findAndCountAll(options);
+			stalles = await MStall.findAndCountAll(options);
 			pageCount = Math.ceil(stalles.count/limit);
-			for(let stall of stalles.rows){
-				const stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
-				stall_detail.color = stall.stall_cus.color
-				stalles_detail.push(stall_detail);
-			}
 		}else if(category == '2'){
 			const {m, d, s, c} = query_info;
 			const options = {
@@ -307,17 +295,23 @@ class homeService extends Service{
 	        }	
 	        console.log(options);
 			max = await MRenter.findAll({});
-			const stalles = await MRenter.findAndCountAll(options);
+			stalles = await MRenter.findAndCountAll(options);
 			pageCount = Math.ceil(stalles.count/limit);
-			for(let stall of stalles.rows){
-				const stall_detail = ctx.helper.getAttributes(stall, [
-				"id", "customer_type", "name", "phone1", "phone2", "IntentionToStall", "currentPosition", "IntentionToMarket", "remark"]);
+		}
+		const stalles_detail = stalles.rows.map(stall =>{
+			let stall_detail;
+			if(category == "1"){
+				stall_detail = ctx.helper.getAttribute(stall, [
+					"id", "customer_id", "customer_type", "market_type", "floor", "stall_name", "customer_name", "phone", "identity_card", "remark"]);
+				stall_detail.color = stall.stall_cus.color;
+			}else if(category == "2"){
+				stall_detail = ctx.helper.getAttributes(stall, [
+				"id", "customer_id", "customer_type", "name",  "currentPosition", "IntentionToMarket", "IntentionToStall", "remark", "renter_time"]);
 				stall_detail.color = stall.renter_cus.color;
 				stall_detail.date = moment(stall.updated_at).format("YYYY-MM-DD HH:mm");
-				stalles_detail.push(stall_detail);
-			}
-		}
-		console.log("url", url);
+			}			
+			return stall_detail;
+		});
 		return {url, max, pageCount, stalles_detail};
 	}
 }
